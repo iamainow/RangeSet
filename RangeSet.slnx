@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="RangeSet.Benchmarks/RangeSet.Benchmarks.csproj" />
+  <Project Path="RangeSet.Test/RangeSet.Test.csproj" />
+  <Project Path="RangeSet/RangeSet.csproj" Id="6ce73274-c79c-4b64-9f49-f3dff2149abb" />
+</Solution>

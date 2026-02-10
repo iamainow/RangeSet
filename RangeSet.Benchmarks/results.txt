@@ -1,0 +1,116 @@
+﻿| Method                                              | Count | SetSize | Input                | Mean         | Error      | StdDev     | Gen0    | Allocated |
+|---------------------------------------------------- |------ |-------- |--------------------- |-------------:|-----------:|-----------:|--------:|----------:|
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 10      | Normalized           |     80.67 us |   0.301 us |   0.281 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 10      | Normalized           |     82.17 us |   0.303 us |   0.284 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 10      | Normalized           |     77.36 us |   0.308 us |   0.288 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 10      | Sorte(...)ng_10 [21] |    109.27 us |   1.023 us |   0.907 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 10      | Sorte(...)ng_10 [21] |     98.31 us |   1.933 us |   2.069 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 10      | Sorte(...)ng_10 [21] |    117.21 us |   0.613 us |   0.478 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 10      | Sorte(...)ng_20 [21] |    107.78 us |   1.258 us |   1.115 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 10      | Sorte(...)ng_20 [21] |     96.41 us |   0.586 us |   0.548 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 10      | Sorte(...)ng_20 [21] |    111.47 us |   1.301 us |   1.153 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 10      | Usort(...)ing_0 [21] |    192.51 us |   0.438 us |   0.388 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 10      | Usort(...)ing_0 [21] |    157.35 us |   0.334 us |   0.279 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 10      | Usort(...)ing_0 [21] |    192.03 us |   0.468 us |   0.438 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 10      | Usort(...)ng_10 [22] |    175.43 us |   0.558 us |   0.466 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 10      | Usort(...)ng_10 [22] |    152.08 us |   1.110 us |   1.038 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 10      | Usort(...)ng_10 [22] |    177.29 us |   0.546 us |   0.511 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 10      | Usort(...)ng_20 [22] |    164.58 us |   0.566 us |   0.501 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 10      | Usort(...)ng_20 [22] |    141.35 us |   0.990 us |   0.926 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 10      | Usort(...)ng_20 [22] |    166.26 us |   0.768 us |   0.718 us | 15.1367 |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 100     | Normalized           |  1,859.79 us |  37.071 us |  54.339 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 100     | Normalized           |  2,041.48 us |  23.347 us |  20.696 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 100     | Normalized           |  2,047.61 us |  22.889 us |  20.291 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 100     | Sorte(...)ng_10 [21] |  2,044.12 us |  21.841 us |  19.362 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 100     | Sorte(...)ng_10 [21] |  2,173.95 us |  17.079 us |  15.976 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 100     | Sorte(...)ng_10 [21] |  2,412.74 us |  17.444 us |  15.464 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 100     | Sorte(...)ng_20 [21] |  1,880.22 us |  11.152 us |   9.886 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 100     | Sorte(...)ng_20 [21] |  2,070.56 us |  21.348 us |  17.827 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 100     | Sorte(...)ng_20 [21] |  2,039.08 us |  22.165 us |  17.305 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 100     | Usort(...)ing_0 [21] |  3,121.19 us |   7.212 us |   6.746 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 100     | Usort(...)ing_0 [21] |  3,099.72 us |  11.274 us |   9.994 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 100     | Usort(...)ing_0 [21] |  3,122.38 us |  12.469 us |  11.663 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 100     | Usort(...)ng_10 [22] |  2,959.54 us |  12.756 us |  11.932 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 100     | Usort(...)ng_10 [22] |  2,952.95 us |  13.949 us |  12.366 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 100     | Usort(...)ng_10 [22] |  3,166.60 us |  19.758 us |  18.482 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 100     | Usort(...)ng_20 [22] |  2,725.22 us |  15.430 us |  13.678 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 100     | Usort(...)ng_20 [22] |  3,003.00 us |  34.468 us |  28.783 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 100     | Usort(...)ng_20 [22] |  2,913.79 us |  15.794 us |  14.774 us | 11.7188 |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 1000    | Normalized           | 20,979.26 us | 111.933 us | 104.703 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 1000    | Normalized           | 23,248.70 us |  57.264 us |  47.818 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 1000    | Normalized           | 23,318.26 us |  78.904 us |  73.807 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 1000    | Sorte(...)ng_10 [21] | 21,708.28 us |  37.982 us |  33.670 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 1000    | Sorte(...)ng_10 [21] | 24,692.05 us |  28.950 us |  22.603 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 1000    | Sorte(...)ng_10 [21] | 24,505.18 us |  43.300 us |  33.806 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 1000    | Sorte(...)ng_20 [21] | 19,392.12 us |  42.825 us |  37.963 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 1000    | Sorte(...)ng_20 [21] | 23,468.87 us |  33.615 us |  29.799 us |       - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 1000    | Sorte(...)ng_20 [21] | 22,315.89 us |  56.571 us |  50.149 us |       - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 1000    | Usort(...)ing_0 [21] | 37,837.52 us | 189.529 us | 177.286 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 1000    | Usort(...)ing_0 [21] | 38,559.42 us |  97.801 us |  81.668 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 1000    | Usort(...)ing_0 [21] | 40,338.37 us | 135.539 us | 120.152 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 1000    | Usort(...)ng_10 [22] | 36,273.41 us |  92.277 us |  86.316 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 1000    | Usort(...)ng_10 [22] | 38,674.59 us |  81.556 us |  76.288 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 1000    | Usort(...)ng_10 [22] | 39,661.85 us |  63.666 us |  59.554 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1000  | 1000    | Usort(...)ng_20 [22] | 34,906.86 us |  69.380 us |  61.503 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1000  | 1000    | Usort(...)ng_20 [22] | 38,106.06 us | 425.705 us | 398.205 us |       - |  128000 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1000  | 1000    | Usort(...)ng_20 [22] | 38,356.21 us | 240.037 us | 224.531 us |       - |  128000 B |
+
+
+
+
+| Method                                              | Count | SetSize | Input                | Mean         | Error      | StdDev     | Gen0   | Allocated |
+|---------------------------------------------------- |------ |-------- |--------------------- |-------------:|-----------:|-----------:|-------:|----------:|
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 10      | Normalized           |     45.92 ns |   0.925 ns |   0.866 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 10      | Normalized           |     43.70 ns |   0.892 ns |   1.279 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 10      | Normalized           |     38.06 ns |   0.600 ns |   0.532 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 10      | Sorte(...)ng_10 [21] |     66.00 ns |   1.216 ns |   1.137 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 10      | Sorte(...)ng_10 [21] |     54.33 ns |   0.546 ns |   0.511 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 10      | Sorte(...)ng_10 [21] |     53.29 ns |   0.873 ns |   0.817 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 10      | Sorte(...)ng_20 [21] |     61.31 ns |   0.733 ns |   0.649 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 10      | Sorte(...)ng_20 [21] |     43.34 ns |   0.371 ns |   0.329 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 10      | Sorte(...)ng_20 [21] |     57.58 ns |   0.642 ns |   0.569 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 10      | Usort(...)ing_0 [21] |     90.50 ns |   0.984 ns |   0.921 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 10      | Usort(...)ing_0 [21] |     74.31 ns |   0.171 ns |   0.152 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 10      | Usort(...)ing_0 [21] |     92.15 ns |   0.461 ns |   0.409 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 10      | Usort(...)ng_10 [22] |     89.56 ns |   0.865 ns |   0.767 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 10      | Usort(...)ng_10 [22] |     79.09 ns |   0.730 ns |   0.683 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 10      | Usort(...)ng_10 [22] |     83.15 ns |   1.083 ns |   0.960 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 10      | Usort(...)ng_20 [22] |     88.86 ns |   0.854 ns |   0.757 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 10      | Usort(...)ng_20 [22] |     80.77 ns |   0.490 ns |   0.410 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 10      | Usort(...)ng_20 [22] |     87.95 ns |   0.452 ns |   0.401 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 100     | Normalized           |    489.88 ns |   8.078 ns |   7.557 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 100     | Normalized           |    466.72 ns |   7.113 ns |   6.654 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 100     | Normalized           |    472.85 ns |   7.529 ns |   6.675 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 100     | Sorte(...)ng_10 [21] |    654.97 ns |   4.792 ns |   4.248 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 100     | Sorte(...)ng_10 [21] |    596.95 ns |  10.096 ns |   8.431 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 100     | Sorte(...)ng_10 [21] |    667.53 ns |   8.170 ns |   7.643 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 100     | Sorte(...)ng_20 [21] |    623.06 ns |   9.349 ns |   8.745 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 100     | Sorte(...)ng_20 [21] |    587.85 ns |   4.818 ns |   4.271 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 100     | Sorte(...)ng_20 [21] |    626.26 ns |   7.499 ns |   7.015 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 100     | Usort(...)ing_0 [21] |  1,140.39 ns |   7.572 ns |   6.323 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 100     | Usort(...)ing_0 [21] |  1,060.41 ns |  12.269 ns |  11.477 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 100     | Usort(...)ing_0 [21] |  1,163.52 ns |  15.529 ns |  14.526 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 100     | Usort(...)ng_10 [22] |  1,150.49 ns |  13.411 ns |  12.544 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 100     | Usort(...)ng_10 [22] |  1,070.58 ns |   8.594 ns |   7.618 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 100     | Usort(...)ng_10 [22] |  1,166.37 ns |  14.267 ns |  13.345 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 100     | Usort(...)ng_20 [22] |  1,106.89 ns |   4.185 ns |   3.495 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 100     | Usort(...)ng_20 [22] |  1,059.80 ns |   7.759 ns |   7.258 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 100     | Usort(...)ng_20 [22] |  1,118.01 ns |  11.917 ns |  10.564 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 1000    | Normalized           |  5,105.21 ns |  20.250 ns |  17.951 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 1000    | Normalized           |  4,997.00 ns |  66.092 ns |  61.822 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 1000    | Normalized           |  5,152.84 ns |  29.358 ns |  27.462 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 1000    | Sorte(...)ng_10 [21] |  6,774.57 ns |  36.519 ns |  32.373 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 1000    | Sorte(...)ng_10 [21] |  6,211.30 ns |  29.591 ns |  24.710 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 1000    | Sorte(...)ng_10 [21] |  6,974.06 ns |  15.493 ns |  12.938 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 1000    | Sorte(...)ng_20 [21] |  6,399.31 ns |  22.391 ns |  19.849 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 1000    | Sorte(...)ng_20 [21] |  6,152.81 ns |  27.274 ns |  24.177 ns |      - |         - |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 1000    | Sorte(...)ng_20 [21] |  6,695.73 ns |  39.103 ns |  34.664 ns |      - |         - |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 1000    | Usort(...)ing_0 [21] | 15,659.66 ns | 141.622 ns | 132.473 ns |      - |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 1000    | Usort(...)ing_0 [21] | 14,232.06 ns | 107.217 ns |  95.045 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 1000    | Usort(...)ing_0 [21] | 15,361.69 ns |  73.547 ns |  65.197 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 1000    | Usort(...)ng_10 [22] | 15,498.25 ns |  61.142 ns |  57.192 ns |      - |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 1000    | Usort(...)ng_10 [22] | 14,936.23 ns |  74.203 ns |  61.963 ns |      - |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 1000    | Usort(...)ng_10 [22] | 15,715.90 ns | 220.971 ns | 206.696 ns |      - |     128 B |
+| SpanHelperGeneric_UInt32_UnionNormalizedNormalized  | 1     | 1000    | Usort(...)ng_20 [22] | 15,617.65 ns | 164.972 ns | 154.315 ns |      - |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedSorted     | 1     | 1000    | Usort(...)ng_20 [22] | 15,364.60 ns | 225.957 ns | 211.360 ns | 0.0153 |     128 B |
+| SpanHelperGeneric_UInt32_ExceptNormalizedNormalized | 1     | 1000    | Usort(...)ng_20 [22] | 15,933.97 ns |  50.669 ns |  39.559 ns |      - |     128 B |

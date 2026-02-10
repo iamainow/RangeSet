@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>RangeSet</PackageId>
+    <Version>0.1.1</Version>
+    <Authors>iamainow</Authors>
+    <Description>A high-performance generic range set library for .NET with support for union, intersection, and difference operations. Optimized for AOT compilation with SIMD-accelerated operations.</Description>
+    <PackageTags>range;set;operations;union;intersect;except;simd;aot</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/iamainow/RangeSet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/iamainow/RangeSet.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="CommunityToolkit.HighPerformance" />
+  </ItemGroup>
+</Project>
