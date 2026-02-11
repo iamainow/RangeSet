@@ -1,6 +1,6 @@
 namespace RangeSet;
 
-public ref struct SpanListRef<T>
+public ref struct SpanList<T>
 {
     private Span<T> _items;
     private int _size;
@@ -8,7 +8,7 @@ public ref struct SpanListRef<T>
     /// <summary>
     /// Initializes a new instance of the SpanListRef<T> class using the specified buffer as the underlying storage.
     /// </summary>
-    public SpanListRef(Span<T> rewritableInternalBuffer)
+    public SpanList(Span<T> rewritableInternalBuffer)
     {
         _items = rewritableInternalBuffer;
         _size = 0;
@@ -18,7 +18,7 @@ public ref struct SpanListRef<T>
     /// Initializes a new instance of the SpanListRef<T> class using the specified buffer as the underlying storage with specified first count of items
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public SpanListRef(Span<T> rewritableInternalBuffer, int count)
+    public SpanList(Span<T> rewritableInternalBuffer, int count)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(count, rewritableInternalBuffer.Length);
 
@@ -29,7 +29,7 @@ public ref struct SpanListRef<T>
     /// <summary>
     /// Initializes a new instance of the SpanListRef<T> class using the specified buffer as the underlying storage and copies the elements into it.
     /// </summary>
-    public SpanListRef(Span<T> rewritableInternalBuffer, ReadOnlySpan<T> elements)
+    public SpanList(Span<T> rewritableInternalBuffer, ReadOnlySpan<T> elements)
     {
         elements.CopyTo(rewritableInternalBuffer);
         _items = rewritableInternalBuffer;
@@ -98,7 +98,7 @@ public ref struct SpanListRef<T>
     }
 
     /// <exception cref="InvalidOperationException"></exception>
-    public void AddRange(scoped SpanListRef<T> items)
+    public void AddRange(scoped SpanList<T> items)
     {
         AddRange(items.AsReadOnlySpan());
     }
