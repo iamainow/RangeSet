@@ -13,9 +13,9 @@ public static class InputTypeParser
             InputType.Sorted_Overlapping_10 => (InputTypeGeneral.Sorted, 0.1),
             InputType.Sorted_Overlapping_20 => (InputTypeGeneral.Sorted, 0.2),
 
-            InputType.Usorted_Overlapping_0 => (InputTypeGeneral.Unsorted, 0),
-            InputType.Usorted_Overlapping_10 => (InputTypeGeneral.Unsorted, 0.1),
-            InputType.Usorted_Overlapping_20 => (InputTypeGeneral.Unsorted, 0.2),
+            InputType.Unsorted_Overlapping_0 => (InputTypeGeneral.Unsorted, 0),
+            InputType.Unsorted_Overlapping_10 => (InputTypeGeneral.Unsorted, 0.1),
+            InputType.Unsorted_Overlapping_20 => (InputTypeGeneral.Unsorted, 0.2),
             _ => throw new NotImplementedException(),
         };
     }

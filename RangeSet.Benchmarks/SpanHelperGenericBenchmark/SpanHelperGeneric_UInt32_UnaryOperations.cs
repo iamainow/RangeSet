@@ -16,9 +16,9 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
         InputType.Normalized,
         InputType.Sorted_Overlapping_10,
         InputType.Sorted_Overlapping_20,
-        InputType.Usorted_Overlapping_0,
-        InputType.Usorted_Overlapping_10,
-        InputType.Usorted_Overlapping_20)]
+        InputType.Unsorted_Overlapping_0,
+        InputType.Unsorted_Overlapping_10,
+        InputType.Unsorted_Overlapping_20)]
     public required InputType Input { get; set; }
 
     public InputTypeGeneral InputGeneral => InputTypeParser.Parse(Input).Item1;
@@ -43,7 +43,7 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
     }
 
     [GlobalSetup]
-    public async Task GlobalSetup()
+    public void GlobalSetup()
     {
         Random random = new(42);
         this.rangesArray = Generate(Count, SetSize, Input, random);
