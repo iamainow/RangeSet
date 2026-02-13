@@ -52,11 +52,10 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
     [Benchmark]
     public int SpanHelperGeneric_UInt32_MakeNormalizedFromUnsorted()
     {
-        uint one = 1U;
         int result = 0;
         for (int index = 0; index < this.Count; ++index)
         {
-            result += SpanHelperGeneric.MakeNormalizedFromUnsorted(this.rangesArray[index], one);
+            result += SpanHelperGeneric.MakeNormalizedFromUnsorted(this.rangesArray[index]);
         }
 
         return result;
@@ -68,7 +67,7 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
         int result = 0;
         for (int index = 0; index < this.Count; ++index)
         {
-            result += SpanHelperGeneric.MakeNormalizedFromUnsorted2(this.rangesArray[index]);
+            result += SpanHelperGeneric.MakeNormalizedFromUnsorted(this.rangesArray[index]);
         }
 
         return result;

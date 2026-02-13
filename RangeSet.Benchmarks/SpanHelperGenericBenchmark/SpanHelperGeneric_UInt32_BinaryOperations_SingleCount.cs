@@ -6,7 +6,7 @@ namespace RangeSet.Benchmarks.SpanHelperGenericBenchmark;
 [Config(typeof(BenchmarkManualConfig))]
 public class SpanHelperGeneric_UInt32_BinaryOperations_SingleCount
 {
-    [Params(1)]
+    [Params(1_000)]
     public int Count { get; set; }
 
     [Params(10, 100, 1_000)]
