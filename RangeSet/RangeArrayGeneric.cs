@@ -5,19 +5,21 @@ using System.Text;
 
 namespace RangeSet;
 
-public readonly ref struct RangeArrayGeneric<T>
-    where T : unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IIncrementOperators<T>
+public static class RangeArrayGeneric
 {
-#pragma warning disable CA1000 // Do not declare static members on generic types
-    public static RangeArrayGeneric<T> Create(scoped ReadOnlySpan<CustomRange<T>> other)
-#pragma warning restore CA1000 // Do not declare static members on generic types
+    public static RangeArrayGeneric<T> Create<T>(scoped ReadOnlySpan<CustomRange<T>> other)
+        where T : unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IIncrementOperators<T>
     {
         Span<CustomRange<T>> resultBuffer = new CustomRange<T>[other.Length];
         other.CopyTo(resultBuffer);
         int length = SpanHelperGeneric.MakeNormalizedFromUnsorted(resultBuffer);
         return new RangeArrayGeneric<T>(resultBuffer[..length], 0);
     }
+}
 
+public readonly ref struct RangeArrayGeneric<T>
+    where T : unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IIncrementOperators<T>
+{
     private readonly ReadOnlySpan<CustomRange<T>> _items; // sorted by First, elements not overlapping, elements non-adjacent (disjoint)
 
     public readonly ReadOnlySpan<CustomRange<T>> ToReadOnlySpan() => this._items;
@@ -36,7 +38,7 @@ public readonly ref struct RangeArrayGeneric<T>
         this._items = resultBuffer;
     }
 
-    private RangeArrayGeneric(ReadOnlySpan<CustomRange<T>> normalizedItems, int i)
+    internal RangeArrayGeneric(ReadOnlySpan<CustomRange<T>> normalizedItems, int i)
     {
         this._items = normalizedItems;
     }
