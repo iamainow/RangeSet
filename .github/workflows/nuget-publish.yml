@@ -3,19 +3,18 @@ name: Build, Test & Publish to NuGet
 on:
   push:
     branches: [ master, main ]
-    tags: [ 'v*' ]
   pull_request:
     branches: [ master, main ]
+  release:
+    types: [ published ]
 
 env:
   DOTNET_VERSION: '10.0.x'
   PACKAGE_PROJECT: RangeSet/RangeSet.csproj
 
 jobs:
-  build-test-and-publish:
+  build-and-test:
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -33,18 +32,36 @@ jobs:
       - name: Test
         run: dotnet test --no-build -c Release --verbosity normal
 
-      - name: Extract version from tag
-        if: startsWith(github.ref, 'refs/tags/v')
-        id: get_version
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "Publishing version: $VERSION"
+  publish:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    environment: production
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
 
       - name: Pack
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: dotnet pack ${{ env.PACKAGE_PROJECT }} -c Release --no-build -o ./packages /p:PackageVersion=${{ steps.get_version.outputs.VERSION }}
+        run: dotnet pack ${{ env.PACKAGE_PROJECT }} -c Release --no-build -o ./packages /p:PackageVersion=${{ github.event.release.tag_name }}
 
       - name: Push to NuGet.org
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "Error: NUGET_API_KEY secret is not set"
+            exit 1
+          fi
+          dotnet nuget push ./packages/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
