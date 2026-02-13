@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/iamainow/RangeSet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
     <!-- Symbol packages for debugging -->
     <IncludeSymbols>true</IncludeSymbols>

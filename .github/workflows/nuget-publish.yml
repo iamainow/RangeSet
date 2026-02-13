@@ -2,9 +2,9 @@ name: Build, Test & Publish to NuGet
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master ]
   release:
     types: [ published ]
 
@@ -22,6 +22,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -32,29 +34,35 @@ jobs:
       - name: Test
         run: dotnet test --no-build -c Release --verbosity normal
 
+      - name: Pack
+        if: github.event_name == 'release'
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          dotnet pack ${{ env.PACKAGE_PROJECT }} -c Release --no-build -o ./packages /p:PackageVersion="$VERSION"
+
+      - name: Upload packages
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: ./packages/*.*nupkg
+          if-no-files-found: error
+
   publish:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     environment: production
     permissions:
+      contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Download packages
+        uses: actions/download-artifact@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --no-restore -c Release
-
-      - name: Pack
-        run: dotnet pack ${{ env.PACKAGE_PROJECT }} -c Release --no-build -o ./packages /p:PackageVersion=${{ github.event.release.tag_name }}
+          name: nuget-packages
+          path: ./packages
 
       - name: Push to NuGet.org
         env:
@@ -65,3 +73,4 @@ jobs:
             exit 1
           fi
           dotnet nuget push ./packages/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push ./packages/*.snupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
