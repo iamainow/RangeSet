@@ -2,11 +2,10 @@ name: Build, Test & Publish to NuGet
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
+    tags: [ 'v*' ]
   pull_request:
-    branches: [ master ]
-  release:
-    types: [ published ]
+    branches: [ master, main ]
 
 env:
   DOTNET_VERSION: '10.0.x'
@@ -32,27 +31,35 @@ jobs:
       - name: Test
         run: dotnet test --no-build -c Release --verbosity normal
 
-      - name: Upload NuGet package artifact
-        if: github.event_name == 'release'
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-packages
-          path: |
-            RangeSet/bin/Release/*.nupkg
-            RangeSet/bin/Release/*.snupkg
-
   publish:
     needs: build-and-test
-    if: github.event_name == 'release'
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       packages: write
     steps:
-      - name: Download NuGet package artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          name: nuget-packages
-          path: packages
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing version: $VERSION"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+      - name: Pack
+        run: dotnet pack ${{ env.PACKAGE_PROJECT }} -c Release --no-build -o ./packages /p:PackageVersion=${{ steps.get_version.outputs.VERSION }}
 
       - name: Push to NuGet.org
-        run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
