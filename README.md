@@ -4,7 +4,7 @@ A high-performance, generic range set library for .NET with support for union, i
 
 ## Features
 
-- **Generic Design**: Works with any type implementing `IComparable<T>`, `IEquatable<T>`, `IMinMaxValue<T>`, and arithmetic operators
+- **Generic Design**: Works with any type implementing `IComparable<T>`, `IEquatable<T>`, `IMinMaxValue<T>`, and increment/decrement operators
 - **High Performance**: Uses `Span<T>` and `ref struct` for low-allocation, efficient operations
 - **AOT Compatible**: Fully compatible with .NET Native AOT compilation
 - **Type Safe**: Compile-time type checking with no boxing for value types
@@ -29,15 +29,15 @@ using RangeSet;
 
 // Build range sets by unioning ranges into an empty set
 var range1 = new RangeArrayGeneric<uint>()
-    .Union(new CustomRange<uint>[] { new(1, 5), new(10, 20) }, 1u);
+    .Union(new CustomRange<uint>[] { new(1, 5), new(10, 20) });
 var range2 = new RangeArrayGeneric<uint>()
-    .Union(new CustomRange<uint>[] { new(3, 12) }, 1u);
+    .Union(new CustomRange<uint>[] { new(3, 12) });
 
 // Union two range sets → [1-20]
-var union = range1.Union(range2, 1u);
+var union = range1.Union(range2);
 
 // Subtract one range set from another → [1-2]
-var difference = range1.Except(range2, 1u);
+var difference = range1.Except(range2);
 
 // Find intersection → [3-5, 10-12]
 var intersection = range1.Intersect(range2);
@@ -52,8 +52,7 @@ The main range set struct that stores a normalized collection of non-overlapping
 ```csharp
 public readonly ref struct RangeArrayGeneric<T>
     where T : unmanaged, IEquatable<T>, IComparable<T>, 
-              IMinMaxValue<T>, IAdditionOperators<T, T, T>, 
-              ISubtractionOperators<T, T, T>
+              IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
 ```
 
 **Operations:**
@@ -96,8 +95,8 @@ public readonly struct MyType :
     IEquatable<MyType>, 
     IComparable<MyType>,
     IMinMaxValue<MyType>,
-    IAdditionOperators<MyType, MyType, MyType>,
-    ISubtractionOperators<MyType, MyType, MyType>
+    IIncrementOperators<MyType>,
+    IDecrementOperators<MyType>
 {
     public static MyType MaxValue => ...;
     public static MyType MinValue => ...;
