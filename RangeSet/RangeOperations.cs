@@ -19,7 +19,7 @@ public static class RangeOperations
         return item1.CompareTo(item2) >= 0 ? item1 : item2;
     }
 
-    public static int MakeNormalizedFromSorted<T>(Span<Range<T>> result)
+    public static int NormalizeSorted<T>(Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IIncrementOperators<T>
     {
         if (result.Length <= 1)
@@ -61,11 +61,11 @@ public static class RangeOperations
         return resultList.Count;
     }
 
-    public static int MakeNormalizedFromUnsorted<T>(Span<Range<T>> result)
+    public static int NormalizeUnsorted<T>(Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IIncrementOperators<T>
     {
         Sort(result);
-        return MakeNormalizedFromSorted(result);
+        return NormalizeSorted(result);
     }
 
     public static void Sort<T>(Span<Range<T>> result)

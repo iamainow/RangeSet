@@ -12,7 +12,7 @@ public static class SortedRangeSet
     {
         Span<Range<T>> resultBuffer = new Range<T>[other.Length];
         other.CopyTo(resultBuffer);
-        int length = RangeOperations.MakeNormalizedFromUnsorted(resultBuffer);
+        int length = RangeOperations.NormalizeUnsorted(resultBuffer);
         return new SortedRangeSet<T>(resultBuffer[..length]);
     }
 }
@@ -56,7 +56,7 @@ public readonly ref struct SortedRangeSet<T>
         Span<Range<T>> otherSpan = otherSpanOwner.Span;
 
         other.CopyTo(otherSpan);
-        int otherSpanLength = RangeOperations.MakeNormalizedFromUnsorted(otherSpan);
+        int otherSpanLength = RangeOperations.NormalizeUnsorted(otherSpan);
 
         Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + otherSpanLength];
         int length = RangeOperations.UnionNormalizedNormalized(this._items, otherSpan[..otherSpanLength], resultBuffer);
@@ -106,7 +106,7 @@ public readonly ref struct SortedRangeSet<T>
         Span<Range<T>> otherSpan = otherSpanOwner.Span;
 
         other.CopyTo(otherSpan);
-        int otherSpanLength = RangeOperations.MakeNormalizedFromUnsorted(otherSpan);
+        int otherSpanLength = RangeOperations.NormalizeUnsorted(otherSpan);
         otherSpan = otherSpan[..otherSpanLength];
 
         Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + otherSpan.Length - 1];

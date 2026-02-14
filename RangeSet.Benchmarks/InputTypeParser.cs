@@ -32,11 +32,11 @@ public static class InputTypeParser
                 }
             case (InputTypeGeneral.Unsorted, InputTypeGeneral.Normalized):
                 {
-                    return RangeOperations.MakeNormalizedFromUnsorted(span);
+                    return RangeOperations.NormalizeUnsorted(span);
                 }
             case (InputTypeGeneral.Sorted, InputTypeGeneral.Normalized):
                 {
-                    return RangeOperations.MakeNormalizedFromSorted(span);
+                    return RangeOperations.NormalizeSorted(span);
                 }
             default: return span.Length;
         }

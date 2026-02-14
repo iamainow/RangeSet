@@ -28,8 +28,8 @@ dotnet add package RangeSet
 using RangeSet;
 
 // Create ranges
-var range1 = RangeSortedSet.Create<uint>(new Range<uint>[] { (1, 5), (10, 20) });
-var range2 = RangeSortedSet.Create<uint>(new Range<uint>[] { (3, 12) });
+var range1 = SortedRangeSet.Create<uint>(new Range<uint>[] { (1, 5), (10, 20) });
+var range2 = SortedRangeSet.Create<uint>(new Range<uint>[] { (3, 12) });
 
 // Union two range sets → [1-20]
 var union = range1.Union(range2);
@@ -43,12 +43,12 @@ var intersection = range1.Intersect(range2);
 
 ## Core Types
 
-### `RangeSortedSet<T>`
+### `SortedRangeSet<T>`
 
 The main range set struct that stores a normalized collection of non-overlapping, non-adjacent ranges.
 
 ```csharp
-public readonly ref struct RangeSortedSet<T>
+public readonly ref struct SortedRangeSet<T>
     where T : unmanaged, IEquatable<T>, IComparable<T>, 
               IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
 ```
@@ -86,7 +86,7 @@ Low-level helper class for range operations on spans. Provides methods for:
 
 ## Type Requirements
 
-To use a custom type with `RangeSortedSet<T>`, it must implement:
+To use a custom type with `SortedRangeSet<T>`, it must implement:
 
 ```csharp
 public readonly struct MyType : 
