@@ -55,18 +55,16 @@ public class SpanHelperGeneric_UInt32_BinaryOperations_SingleCount
         using var bufferSpanOwner = SpanOwner<CustomRange<uint>>.Allocate(this.SetSize * 2);
         var buffer = bufferSpanOwner.Span;
         int result = 0;
-        uint one = 1u;
         var fromType = InputGeneral;
         {
             Span<CustomRange<uint>> span1 = this.rangesArray_1;
             Span<CustomRange<uint>> span2 = this.rangesArray_2;
-            int length1 = InputTypeParser.Convert(span1, one, fromType, InputTypeGeneral.Normalized);
-            int length2 = InputTypeParser.Convert(span2, one, fromType, InputTypeGeneral.Normalized);
+            int length1 = InputTypeParser.Convert(span1, fromType, InputTypeGeneral.Normalized);
+            int length2 = InputTypeParser.Convert(span2, fromType, InputTypeGeneral.Normalized);
             result += SpanHelperGeneric.UnionNormalizedNormalized(
                 span1[..length1],
                 span2[..length2],
-                buffer,
-                one);
+                buffer);
         }
 
         return result;
@@ -78,18 +76,16 @@ public class SpanHelperGeneric_UInt32_BinaryOperations_SingleCount
         using var bufferSpanOwner = SpanOwner<CustomRange<uint>>.Allocate(this.SetSize * 2);
         var buffer = bufferSpanOwner.Span;
         int result = 0;
-        uint one = 1u;
         var fromType = InputGeneral;
         {
             Span<CustomRange<uint>> span1 = this.rangesArray_1;
             Span<CustomRange<uint>> span2 = this.rangesArray_2;
-            int length1 = InputTypeParser.Convert(span1, one, fromType, InputTypeGeneral.Normalized);
-            int length2 = InputTypeParser.Convert(span2, one, fromType, InputTypeGeneral.Sorted);
+            int length1 = InputTypeParser.Convert(span1, fromType, InputTypeGeneral.Normalized);
+            int length2 = InputTypeParser.Convert(span2, fromType, InputTypeGeneral.Sorted);
             result += SpanHelperGeneric.ExceptNormalizedSorted(
                 span1[..length1],
                 span2[..length2],
-                buffer,
-                one);
+                buffer);
         }
 
         return result;
@@ -101,18 +97,16 @@ public class SpanHelperGeneric_UInt32_BinaryOperations_SingleCount
         using var bufferSpanOwner = SpanOwner<CustomRange<uint>>.Allocate(this.SetSize * 2);
         var buffer = bufferSpanOwner.Span;
         int result = 0;
-        uint one = 1u;
         var fromType = InputGeneral;
         {
             Span<CustomRange<uint>> span1 = this.rangesArray_1;
             Span<CustomRange<uint>> span2 = this.rangesArray_2;
-            int length1 = InputTypeParser.Convert(span1, one, fromType, InputTypeGeneral.Normalized);
-            int length2 = InputTypeParser.Convert(span2, one, fromType, InputTypeGeneral.Normalized);
+            int length1 = InputTypeParser.Convert(span1, fromType, InputTypeGeneral.Normalized);
+            int length2 = InputTypeParser.Convert(span2, fromType, InputTypeGeneral.Normalized);
             result += SpanHelperGeneric.ExceptNormalizedSorted(
                 span1[..length1],
                 span2[..length2],
-                buffer,
-                one);
+                buffer);
         }
 
         return result;
