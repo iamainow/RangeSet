@@ -6,7 +6,7 @@ public ref struct SpanList<T>
     private int _size;
 
     /// <summary>
-    /// Initializes a new instance of the SpanListRef<T> class using the specified buffer as the underlying storage.
+    /// Initializes a new instance of the SpanList<T> class using the specified buffer as the underlying storage.
     /// </summary>
     public SpanList(Span<T> rewritableInternalBuffer)
     {
@@ -15,7 +15,7 @@ public ref struct SpanList<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the SpanListRef<T> class using the specified buffer as the underlying storage with specified first count of items
+    /// Initializes a new instance of the SpanList<T> class using the specified buffer as the underlying storage with specified first count of items
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public SpanList(Span<T> rewritableInternalBuffer, int count)
@@ -27,7 +27,7 @@ public ref struct SpanList<T>
     }
 
     /// <summary>
-    /// Initializes a new instance of the SpanListRef<T> class using the specified buffer as the underlying storage and copies the elements into it.
+    /// Initializes a new instance of the SpanList<T> class using the specified buffer as the underlying storage and copies the elements into it.
     /// </summary>
     public SpanList(Span<T> rewritableInternalBuffer, ReadOnlySpan<T> elements)
     {

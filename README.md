@@ -27,11 +27,9 @@ dotnet add package RangeSet
 ```csharp
 using RangeSet;
 
-// Build range sets by unioning ranges into an empty set
-var range1 = new RangeArrayGeneric<uint>()
-    .Union(new CustomRange<uint>[] { new(1, 5), new(10, 20) });
-var range2 = new RangeArrayGeneric<uint>()
-    .Union(new CustomRange<uint>[] { new(3, 12) });
+// Create ranges
+var range1 = RangeSortedSet.Create<uint>(new Range<uint>[] { (1, 5), (10, 20) });
+var range2 = RangeSortedSet.Create<uint>(new Range<uint>[] { (3, 12) });
 
 // Union two range sets → [1-20]
 var union = range1.Union(range2);
@@ -45,12 +43,12 @@ var intersection = range1.Intersect(range2);
 
 ## Core Types
 
-### `RangeArrayGeneric<T>`
+### `RangeSortedSet<T>`
 
 The main range set struct that stores a normalized collection of non-overlapping, non-adjacent ranges.
 
 ```csharp
-public readonly ref struct RangeArrayGeneric<T>
+public readonly ref struct RangeSortedSet<T>
     where T : unmanaged, IEquatable<T>, IComparable<T>, 
               IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
 ```
@@ -73,11 +71,11 @@ public readonly struct Range<T>
 
 **Example:**
 ```csharp
-var range = new CustomRange<uint>(1, 100);
+var range = new Range<uint>(1, 100);
 Console.WriteLine(range); // "1 - 100"
 ```
 
-### `SpanHelperGeneric`
+### `RangeOperations`
 
 Low-level helper class for range operations on spans. Provides methods for:
 - `UnionNormalizedNormalized()` - Union of two normalized range sets
@@ -88,7 +86,7 @@ Low-level helper class for range operations on spans. Provides methods for:
 
 ## Type Requirements
 
-To use a custom type with `RangeArrayGeneric<T>`, it must implement:
+To use a custom type with `RangeSortedSet<T>`, it must implement:
 
 ```csharp
 public readonly struct MyType : 
