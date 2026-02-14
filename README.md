@@ -59,15 +59,15 @@ public readonly ref struct RangeArrayGeneric<T>
 - `Union()` - Combine two range sets
 - `Except()` - Subtract one range set from another
 - `Intersect()` - Find common ranges between two sets
-- `ToArray()` - Convert to array of `CustomRange<T>`
+- `ToArray()` - Convert to array of `Range<T>`
 - `ToReadOnlySpan()` - Access underlying span
 
-### `CustomRange<T>`
+### `Range<T>`
 
 Represents a single inclusive range from `First` to `Last`.
 
 ```csharp
-public readonly struct CustomRange<T>
+public readonly struct Range<T>
     where T : struct, IEquatable<T>, IComparable<T>
 ```
 
