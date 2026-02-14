@@ -4,7 +4,7 @@ using System.Text;
 namespace RangeSet;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public readonly struct CustomRange<T> : IEquatable<CustomRange<T>>
+public readonly struct Range<T> : IEquatable<Range<T>>
     where T : struct, IEquatable<T>, IComparable<T>
 {
     private readonly T first;
@@ -13,7 +13,7 @@ public readonly struct CustomRange<T> : IEquatable<CustomRange<T>>
     public T First => this.first;
     public T Last => this.last;
 
-    public CustomRange(T first, T last)
+    public Range(T first, T last)
     {
         if (first.CompareTo(last) > 0)
         {
@@ -33,14 +33,14 @@ public readonly struct CustomRange<T> : IEquatable<CustomRange<T>>
 
     public override bool Equals(object? obj)
     {
-        if (obj is not CustomRange<T> other)
+        if (obj is not Range<T> other)
         {
             return false;
         }
         return Equals(other);
     }
 
-    public bool Equals(CustomRange<T> other)
+    public bool Equals(Range<T> other)
     {
         return this.first.Equals(other.first) && this.last.Equals(other.last);
     }
@@ -50,12 +50,12 @@ public readonly struct CustomRange<T> : IEquatable<CustomRange<T>>
         return HashCode.Combine(this.first, this.last);
     }
 
-    public static bool operator ==(CustomRange<T> left, CustomRange<T> right)
+    public static bool operator ==(Range<T> left, Range<T> right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(CustomRange<T> left, CustomRange<T> right)
+    public static bool operator !=(Range<T> left, Range<T> right)
     {
         return !left.Equals(right);
     }

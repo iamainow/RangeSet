@@ -2,7 +2,7 @@
 
 public static class CustomArrayExtensions
 {
-    public static unsafe CustomRange<T>[] GenerateNormalized<T>(int size, Func<ReadOnlySpan<byte>, T> convert, Random random)
+    public static unsafe Range<T>[] GenerateNormalized<T>(int size, Func<ReadOnlySpan<byte>, T> convert, Random random)
         where T : unmanaged, IEquatable<T>, IComparable<T>
     {
         ArgumentNullException.ThrowIfNull(convert);
@@ -17,10 +17,10 @@ public static class CustomArrayExtensions
             addresses.Add(convert(buffer));
         }
 
-        return addresses.Chunk(2).Select(x => new CustomRange<T>(x[0], x[1])).ToArray();
+        return addresses.Chunk(2).Select(x => new Range<T>(x[0], x[1])).ToArray();
     }
 
-    public static unsafe CustomRange<T>[] GenerateSorted<T>(int size, Func<ReadOnlySpan<byte>, T> convert, double overlappingPercent, Random random)
+    public static unsafe Range<T>[] GenerateSorted<T>(int size, Func<ReadOnlySpan<byte>, T> convert, double overlappingPercent, Random random)
         where T : unmanaged, IEquatable<T>, IComparable<T>
     {
         var result = GenerateNormalized(size, convert, random);
@@ -30,7 +30,7 @@ public static class CustomArrayExtensions
         return result;
     }
 
-    public static unsafe CustomRange<T>[] GenerateUnsorted<T>(int size, Func<ReadOnlySpan<byte>, T> convert, double overlappingPercent, Random random)
+    public static unsafe Range<T>[] GenerateUnsorted<T>(int size, Func<ReadOnlySpan<byte>, T> convert, double overlappingPercent, Random random)
         where T : unmanaged, IEquatable<T>, IComparable<T>
     {
         ArgumentNullException.ThrowIfNull(random);
@@ -42,7 +42,7 @@ public static class CustomArrayExtensions
         return result;
     }
 
-    private static void MakeOverlapping<T>(Span<CustomRange<T>> sortedArray, double overlappingPercent, Random random)
+    private static void MakeOverlapping<T>(Span<Range<T>> sortedArray, double overlappingPercent, Random random)
         where T : struct, IEquatable<T>, IComparable<T>
     {
         for (int i = 0; i < sortedArray.Length - 1; ++i)
@@ -52,8 +52,8 @@ public static class CustomArrayExtensions
                 var t1 = sortedArray[i].Last;
                 var t2 = sortedArray[i + 1].First;
 
-                sortedArray[i] = new CustomRange<T>(sortedArray[i].First, t2);
-                sortedArray[i + 1] = new CustomRange<T>(t1, sortedArray[i + 1].Last);
+                sortedArray[i] = new Range<T>(sortedArray[i].First, t2);
+                sortedArray[i + 1] = new Range<T>(t1, sortedArray[i + 1].Last);
             }
         }
     }

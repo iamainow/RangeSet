@@ -23,13 +23,13 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
 
     public InputTypeGeneral InputGeneral => InputTypeParser.Parse(Input).Item1;
 
-    private CustomRange<uint>[][] rangesArray = [];
+    private Range<uint>[][] rangesArray = [];
 
-    private static CustomRange<uint>[][] Generate(int count, int size, InputType input, Random random)
+    private static Range<uint>[][] Generate(int count, int size, InputType input, Random random)
     {
         Func<ReadOnlySpan<byte>, uint> convert = BitConverter.ToUInt32;
 
-        Func<CustomRange<uint>[]> generator = InputTypeParser.Parse(input) switch
+        Func<Range<uint>[]> generator = InputTypeParser.Parse(input) switch
         {
             (InputTypeGeneral.Normalized, _) => () => CustomArrayExtensions.GenerateNormalized(size, convert, random),
             (InputTypeGeneral.Sorted, double overlappingPercent) => () => CustomArrayExtensions.GenerateSorted(size, convert, overlappingPercent, random),
@@ -38,7 +38,7 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
         };
 
         return Enumerable.Range(0, count)
-            .Select(_ => generator().Select(x => new CustomRange<uint>(x.First, x.Last)).ToArray())
+            .Select(_ => generator().Select(x => new Range<uint>(x.First, x.Last)).ToArray())
             .ToArray();
     }
 
@@ -55,7 +55,7 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
         int result = 0;
         for (int index = 0; index < this.Count; ++index)
         {
-            result += SpanHelperGeneric.MakeNormalizedFromUnsorted(this.rangesArray[index]);
+            result += RangeOperations.MakeNormalizedFromUnsorted(this.rangesArray[index]);
         }
 
         return result;
@@ -67,7 +67,7 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
         int result = 0;
         for (int index = 0; index < this.Count; ++index)
         {
-            result += SpanHelperGeneric.MakeNormalizedFromUnsorted(this.rangesArray[index]);
+            result += RangeOperations.MakeNormalizedFromUnsorted(this.rangesArray[index]);
         }
 
         return result;
@@ -79,7 +79,7 @@ public class SpanHelperGeneric_UInt32_UnaryOperations
         int result = 0;
         for (int index = 0; index < this.Count; ++index)
         {
-            SpanHelperGeneric.Sort(this.rangesArray[index]);
+            RangeOperations.Sort(this.rangesArray[index]);
             result ^= this.rangesArray[index][0].GetHashCode(); // Prevent optimization
         }
 

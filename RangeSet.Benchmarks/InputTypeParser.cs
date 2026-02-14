@@ -20,23 +20,23 @@ public static class InputTypeParser
         };
     }
 
-    public static int Convert<T>(Span<CustomRange<T>> span, InputTypeGeneral fromType, InputTypeGeneral toType)
+    public static int Convert<T>(Span<Range<T>> span, InputTypeGeneral fromType, InputTypeGeneral toType)
         where T : struct, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>
     {
         switch (fromType, toType)
         {
             case (InputTypeGeneral.Unsorted, InputTypeGeneral.Sorted):
                 {
-                    SpanHelperGeneric.Sort(span);
+                    RangeOperations.Sort(span);
                     return span.Length;
                 }
             case (InputTypeGeneral.Unsorted, InputTypeGeneral.Normalized):
                 {
-                    return SpanHelperGeneric.MakeNormalizedFromUnsorted(span);
+                    return RangeOperations.MakeNormalizedFromUnsorted(span);
                 }
             case (InputTypeGeneral.Sorted, InputTypeGeneral.Normalized):
                 {
-                    return SpanHelperGeneric.MakeNormalizedFromSorted(span);
+                    return RangeOperations.MakeNormalizedFromSorted(span);
                 }
             default: return span.Length;
         }

@@ -5,7 +5,7 @@ namespace RangeSet;
 // unsorted - unsorted, overlapping/adjacent
 // sorted - sorted but overlapping/adjacent
 // normalized - sorted, not overlapped, non-adjacent
-public static class SpanHelperGeneric
+public static class RangeOperations
 {
     private static T Min<T>(T item1, T item2)
         where T : IComparable<T>
@@ -19,7 +19,7 @@ public static class SpanHelperGeneric
         return item1.CompareTo(item2) >= 0 ? item1 : item2;
     }
 
-    public static int MakeNormalizedFromSorted<T>(Span<CustomRange<T>> result)
+    public static int MakeNormalizedFromSorted<T>(Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IIncrementOperators<T>
     {
         if (result.Length <= 1)
@@ -27,7 +27,7 @@ public static class SpanHelperGeneric
             return result.Length;
         }
 
-        var resultList = new SpanList<CustomRange<T>>(result, 1);
+        var resultList = new SpanList<Range<T>>(result, 1);
 
         for (int i = 1; i < result.Length; i++)
         {
@@ -38,7 +38,7 @@ public static class SpanHelperGeneric
             if (last.Last.CompareTo(current.First) >= 0)
             {
                 // Overlapping - merge
-                last = new CustomRange<T>(last.First, Max(last.Last, current.Last));
+                last = new Range<T>(last.First, Max(last.Last, current.Last));
             }
             else
             {
@@ -49,7 +49,7 @@ public static class SpanHelperGeneric
                 if (nextAfterLast.Equals(current.First))
                 {
                     // Adjacent - merge (current.Last > last.Last since not overlapping)
-                    last = new CustomRange<T>(last.First, current.Last);
+                    last = new Range<T>(last.First, current.Last);
                 }
                 else
                 {
@@ -61,20 +61,20 @@ public static class SpanHelperGeneric
         return resultList.Count;
     }
 
-    public static int MakeNormalizedFromUnsorted<T>(Span<CustomRange<T>> result)
+    public static int MakeNormalizedFromUnsorted<T>(Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IIncrementOperators<T>
     {
         Sort(result);
         return MakeNormalizedFromSorted(result);
     }
 
-    public static void Sort<T>(Span<CustomRange<T>> result)
+    public static void Sort<T>(Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>
     {
-        result.Sort(CustomRangeComparer<T>.Instance);
+        result.Sort(RangeComparer<T>.Instance);
     }
 
-    public static int UnionNormalizedNormalized<T>(ReadOnlySpan<CustomRange<T>> normalized1, ReadOnlySpan<CustomRange<T>> normalized2, Span<CustomRange<T>> result)
+    public static int UnionNormalizedNormalized<T>(ReadOnlySpan<Range<T>> normalized1, ReadOnlySpan<Range<T>> normalized2, Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>
     {
         if (result.Overlaps(normalized1))
@@ -99,7 +99,7 @@ public static class SpanHelperGeneric
             return normalized1.Length;
         }
 
-        SpanList<CustomRange<T>> resultList = new SpanList<CustomRange<T>>(result);
+        SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
         int index1 = 0;
         int index2 = 0;
 
@@ -121,7 +121,7 @@ public static class SpanHelperGeneric
 
         while (index1 < normalized1.Length && index2 < normalized2.Length)
         {
-            CustomRange<T> current;
+            Range<T> current;
             var item1 = normalized1[index1];
             var item2 = normalized2[index2];
             if (item1.First.CompareTo(item2.First) <= 0)
@@ -138,7 +138,7 @@ public static class SpanHelperGeneric
             ref var last = ref resultList.Last();
             if (T.MaxValue.Equals(last.Last))
             {
-                last = new CustomRange<T>(last.First, T.MaxValue);
+                last = new Range<T>(last.First, T.MaxValue);
                 return resultList.Count;
             }
             else
@@ -147,7 +147,7 @@ public static class SpanHelperGeneric
                 ++afterLastLast;
                 if (afterLastLast.CompareTo(current.First) >= 0)
                 {
-                    last = new CustomRange<T>(last.First, Max(last.Last, current.Last));
+                    last = new Range<T>(last.First, Max(last.Last, current.Last));
                 }
                 else
                 {
@@ -158,12 +158,12 @@ public static class SpanHelperGeneric
 
         while (index2 < normalized2.Length)
         {
-            CustomRange<T> current = normalized2[index2];
+            Range<T> current = normalized2[index2];
 
             ref var last = ref resultList.Last();
             if (T.MaxValue.Equals(last.Last))
             {
-                last = new CustomRange<T>(last.First, T.MaxValue);
+                last = new Range<T>(last.First, T.MaxValue);
                 return resultList.Count;
             }
             else
@@ -172,7 +172,7 @@ public static class SpanHelperGeneric
                 ++afterLastLast;
                 if (afterLastLast.CompareTo(current.First) >= 0)
                 {
-                    last = new CustomRange<T>(last.First, Max(last.Last, current.Last));
+                    last = new Range<T>(last.First, Max(last.Last, current.Last));
                     ++index2;
                 }
                 else
@@ -185,12 +185,12 @@ public static class SpanHelperGeneric
 
         while (index1 < normalized1.Length)
         {
-            CustomRange<T> current = normalized1[index1];
+            Range<T> current = normalized1[index1];
 
             ref var last = ref resultList.Last();
             if (T.MaxValue.Equals(last.Last))
             {
-                last = new CustomRange<T>(last.First, T.MaxValue);
+                last = new Range<T>(last.First, T.MaxValue);
                 return resultList.Count;
             }
             else
@@ -199,7 +199,7 @@ public static class SpanHelperGeneric
                 ++afterLastLast;
                 if (afterLastLast.CompareTo(current.First) >= 0)
                 {
-                    last = new CustomRange<T>(last.First, Max(last.Last, current.Last));
+                    last = new Range<T>(last.First, Max(last.Last, current.Last));
                     ++index1;
                 }
                 else
@@ -214,7 +214,7 @@ public static class SpanHelperGeneric
     }
 
     /// <returns>left and right parts</returns>
-    private static (CustomRange<T>?, CustomRange<T>?) IntersectableExcept<T>(CustomRange<T> range, CustomRange<T> other)
+    private static (Range<T>?, Range<T>?) IntersectableExcept<T>(Range<T> range, Range<T> other)
         where T : struct, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
     {
         bool hasLeftPart = other.First.CompareTo(range.First) > 0 && !T.MinValue.Equals(other.First);
@@ -228,11 +228,11 @@ public static class SpanHelperGeneric
             {
                 var afterOtherLast = other.Last;
                 ++afterOtherLast;
-                return (new CustomRange<T>(range.First, beforeOtherFirst), new CustomRange<T>(afterOtherLast, range.Last));
+                return (new Range<T>(range.First, beforeOtherFirst), new Range<T>(afterOtherLast, range.Last));
             }
             else
             {
-                return (new CustomRange<T>(range.First, beforeOtherFirst), null);
+                return (new Range<T>(range.First, beforeOtherFirst), null);
             }
         }
         else
@@ -241,7 +241,7 @@ public static class SpanHelperGeneric
             {
                 var afterOtherLast = other.Last;
                 ++afterOtherLast;
-                return (null, new CustomRange<T>(afterOtherLast, range.Last));
+                return (null, new Range<T>(afterOtherLast, range.Last));
             }
             else
             {
@@ -250,7 +250,7 @@ public static class SpanHelperGeneric
         }
     }
 
-    public static int ExceptNormalizedSorted<T>(ReadOnlySpan<CustomRange<T>> normalized, ReadOnlySpan<CustomRange<T>> sorted, Span<CustomRange<T>> result)
+    public static int ExceptNormalizedSorted<T>(ReadOnlySpan<Range<T>> normalized, ReadOnlySpan<Range<T>> sorted, Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
     {
         if (result.Overlaps(normalized))
@@ -274,11 +274,11 @@ public static class SpanHelperGeneric
             return normalized.Length;
         }
 
-        SpanList<CustomRange<T>> resultList = new SpanList<CustomRange<T>>(result);
+        SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
 
         int i = 0;
         int j = 0;
-        CustomRange<T> currentRange = normalized[0];
+        Range<T> currentRange = normalized[0];
 
         while (true)
         {
@@ -339,7 +339,7 @@ public static class SpanHelperGeneric
         return resultList.Count;
     }
 
-    public static int IntersectNormalizedNormalized<T>(ReadOnlySpan<CustomRange<T>> normalized1, ReadOnlySpan<CustomRange<T>> normalized2, Span<CustomRange<T>> result)
+    public static int IntersectNormalizedNormalized<T>(ReadOnlySpan<Range<T>> normalized1, ReadOnlySpan<Range<T>> normalized2, Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>
     {
         if (result.Overlaps(normalized1))
@@ -364,7 +364,7 @@ public static class SpanHelperGeneric
 
         int maxLength = normalized1.Length + normalized2.Length - 1;
 
-        SpanList<CustomRange<T>> resultList = new SpanList<CustomRange<T>>(result);
+        SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
         int index1 = 0;
         int index2 = 0;
         while (index1 < normalized1.Length && index2 < normalized2.Length)
@@ -386,7 +386,7 @@ public static class SpanHelperGeneric
                 // Ranges overlap
                 T start = Max(item1.First, item2.First);
                 T end = Min(item1.Last, item2.Last);
-                resultList.Add(new CustomRange<T>(start, end));
+                resultList.Add(new Range<T>(start, end));
 
                 int comparing = item1.Last.CompareTo(item2.Last);
                 if (comparing <= 0)
