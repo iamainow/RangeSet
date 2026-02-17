@@ -1,6 +1,6 @@
 # RangeSet
 
-A high-performance, generic range set library for .NET with support for union, intersection, and difference operations. Works with any numeric type including integers, floating-point numbers, and custom types.
+A high-performance, generic range set library for .NET with support for union, intersection, and difference operations. Works with any numeric type including integers and custom types.
 
 ## Features
 
@@ -13,7 +13,6 @@ A high-performance, generic range set library for .NET with support for union, i
 ## Supported Types
 
 - Integer types: `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `Int128`, `UInt128`
-- Floating-point types: `Half`, `float`, `double`, `decimal`
 - Custom `unmanaged` types implementing the required interfaces
 
 ## Installation
