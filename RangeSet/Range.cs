@@ -3,7 +3,7 @@ using System.Text;
 
 namespace RangeSet;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
+[StructLayout(LayoutKind.Sequential, Pack = 0)]
 public readonly struct Range<T> : IEquatable<Range<T>>
     where T : struct, IEquatable<T>, IComparable<T>
 {

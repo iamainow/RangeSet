@@ -74,7 +74,10 @@ public static class RangeOperations
         result.Sort(RangeComparer<T>.Instance);
     }
 
-    public static int UnionNormalizedNormalized<T>(ReadOnlySpan<Range<T>> normalized1, ReadOnlySpan<Range<T>> normalized2, Span<Range<T>> result)
+    public static int UnionNormalizedNormalized<T>(
+        ReadOnlySpan<Range<T>> normalized1,
+        ReadOnlySpan<Range<T>> normalized2,
+        Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>
     {
         if (result.Overlaps(normalized1))
@@ -250,7 +253,10 @@ public static class RangeOperations
         }
     }
 
-    public static int ExceptNormalizedSorted<T>(ReadOnlySpan<Range<T>> normalized, ReadOnlySpan<Range<T>> sorted, Span<Range<T>> result)
+    public static int ExceptNormalizedSorted<T>(
+        ReadOnlySpan<Range<T>> normalized,
+        ReadOnlySpan<Range<T>> sorted,
+        Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
     {
         if (result.Overlaps(normalized))
@@ -312,7 +318,7 @@ public static class RangeOperations
             else
             {
                 // Ranges overlap - compute the difference
-                (var leftPart, var rightPart) = IntersectableExcept(currentRange, otherCurr);
+                var (leftPart, rightPart) = IntersectableExcept(currentRange, otherCurr);
 
                 if (leftPart.HasValue)
                 {
@@ -339,7 +345,15 @@ public static class RangeOperations
         return resultList.Count;
     }
 
-    public static int IntersectNormalizedNormalized<T>(ReadOnlySpan<Range<T>> normalized1, ReadOnlySpan<Range<T>> normalized2, Span<Range<T>> result)
+    public static int CalcIntersectBufferLength(int length1, int length2)
+    {
+        return length1 == 0 || length2 == 0 ? 0 : length1 + length2 - 1;
+    }
+
+    public static int IntersectNormalizedNormalized<T>(
+        ReadOnlySpan<Range<T>> normalized1,
+        ReadOnlySpan<Range<T>> normalized2,
+        Span<Range<T>> result)
         where T : struct, IEquatable<T>, IComparable<T>
     {
         if (result.Overlaps(normalized1))
@@ -361,9 +375,7 @@ public static class RangeOperations
         {
             return 0;
         }
-
-        int maxLength = normalized1.Length + normalized2.Length - 1;
-
+        
         SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
         int index1 = 0;
         int index2 = 0;
