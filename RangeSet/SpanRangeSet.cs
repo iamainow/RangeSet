@@ -7,16 +7,16 @@ using System.Text;
 
 namespace RangeSet;
 
-public static class SortedRangeSet
+public static class SpanRangeSet
 {
-    public static SortedRangeSet<T> Create<T>(scoped ReadOnlySpan<Range<T>> other)
+    public static SpanRangeSet<T> Create<T>(scoped ReadOnlySpan<Range<T>> other)
         where T : unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>,
         IDecrementOperators<T>
     {
         Span<Range<T>> resultBuffer = new Range<T>[other.Length];
         other.CopyTo(resultBuffer);
         int length = RangeOperations.NormalizeUnsorted(resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
     
     public static int CalculateUnionSize(int length1, int length2) => length1 + length2;
@@ -27,7 +27,7 @@ public static class SortedRangeSet
         length1 == 0 || length2 == 0 ? 0 : length1 + length2 - 1;
 }
 
-public readonly ref struct SortedRangeSet<T>
+public readonly ref struct SpanRangeSet<T>
     where T : unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
 {
     private readonly ReadOnlySpan<Range<T>>
@@ -37,29 +37,29 @@ public readonly ref struct SortedRangeSet<T>
 
     public readonly int RangesCount => this._items.Length;
 
-    public SortedRangeSet()
+    public SpanRangeSet()
     {
         this._items = ReadOnlySpan<Range<T>>.Empty;
     }
 
-    public SortedRangeSet(scoped SortedRangeSet<T> other, Span<Range<T>> internalBuffer)
+    public SpanRangeSet(scoped SpanRangeSet<T> other, Span<Range<T>> internalBuffer)
     {
         other._items.CopyTo(internalBuffer);
         this._items = internalBuffer;
     }
 
-    internal SortedRangeSet(ReadOnlySpan<Range<T>> normalizedItems)
+    internal SpanRangeSet(ReadOnlySpan<Range<T>> normalizedItems)
     {
         this._items = normalizedItems;
     }
 
-    public readonly SortedRangeSet<T> Union(scoped SortedRangeSet<T> other, Span<Range<T>> resultBuffer)
+    public readonly SpanRangeSet<T> Union(scoped SpanRangeSet<T> other, Span<Range<T>> resultBuffer)
     {
         int length = RangeOperations.UnionNormalizedNormalized(this._items, other._items, resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
 
-    public readonly SortedRangeSet<T> Union(scoped ReadOnlySpan<Range<T>> other, Span<Range<T>> resultBuffer)
+    public readonly SpanRangeSet<T> Union(scoped ReadOnlySpan<Range<T>> other, Span<Range<T>> resultBuffer)
     {
         using SpanOwner<Range<T>> tempSpanOwner = SpanOwner<Range<T>>.Allocate(other.Length);
         Span<Range<T>> tempSpan = tempSpanOwner.Span;
@@ -68,17 +68,17 @@ public readonly ref struct SortedRangeSet<T>
         int otherSpanLength = RangeOperations.NormalizeUnsorted(tempSpan);
 
         int length = RangeOperations.UnionNormalizedNormalized(this._items, tempSpan[..otherSpanLength], resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
 
-    public SortedRangeSet<T> Except(scoped SortedRangeSet<T> other)
+    public SpanRangeSet<T> Except(scoped SpanRangeSet<T> other)
     {
         Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + other._items.Length];
         int length = RangeOperations.ExceptNormalizedSorted(this._items, other._items, resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
 
-    public SortedRangeSet<T> Except(scoped ReadOnlySpan<Range<T>> other)
+    public SpanRangeSet<T> Except(scoped ReadOnlySpan<Range<T>> other)
     {
         using SpanOwner<Range<T>> otherSpanOwner = SpanOwner<Range<T>>.Allocate(other.Length);
         Span<Range<T>> otherSpan = otherSpanOwner.Span;
@@ -88,26 +88,26 @@ public readonly ref struct SortedRangeSet<T>
 
         Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + otherSpan.Length];
         int length = RangeOperations.ExceptNormalizedSorted(this._items, otherSpan, resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
 
-    public SortedRangeSet<T> Intersect(scoped SortedRangeSet<T> other)
+    public SpanRangeSet<T> Intersect(scoped SpanRangeSet<T> other)
     {
         if (this._items.Length == 0 || other._items.Length == 0)
         {
-            return new SortedRangeSet<T>();
+            return new SpanRangeSet<T>();
         }
 
         Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + other._items.Length - 1];
         int length = RangeOperations.IntersectNormalizedNormalized(this._items, other._items, resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
 
-    public SortedRangeSet<T> Intersect(scoped ReadOnlySpan<Range<T>> other)
+    public SpanRangeSet<T> Intersect(scoped ReadOnlySpan<Range<T>> other)
     {
         if (this._items.Length == 0 || other.Length == 0)
         {
-            return new SortedRangeSet<T>();
+            return new SpanRangeSet<T>();
         }
 
         using SpanOwner<Range<T>> otherSpanOwner = SpanOwner<Range<T>>.Allocate(other.Length);
@@ -119,7 +119,7 @@ public readonly ref struct SortedRangeSet<T>
 
         Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + otherSpan.Length - 1];
         int length = RangeOperations.IntersectNormalizedNormalized(this._items, otherSpan, resultBuffer);
-        return new SortedRangeSet<T>(resultBuffer[..length]);
+        return new SpanRangeSet<T>(resultBuffer[..length]);
     }
 
     public Range<T>[] ToArray()
