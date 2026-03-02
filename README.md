@@ -48,11 +48,11 @@ var intersection = range1.Intersect(range2);
 Span<Range<uint>> buffer1 = stackalloc Range<uint>[2];
 buffer1[0] = new Range<uint>(1, 5);
 buffer1[1] = new Range<uint>(10, 20);
-var spanRange1 = SpanRangeSet.Create<uint>(buffer1);
+var spanRange1 = new SpanRangeSet<uint>(buffer1);
 
 Span<Range<uint>> buffer2 = stackalloc Range<uint>[1];
 buffer2[0] = new Range<uint>(3, 12);
-var spanRange2 = SpanRangeSet.Create<uint>(buffer2);
+var spanRange2 = new SpanRangeSet<uint>(buffer2);
 
 // Operations work the same way
 var spanUnion = spanRange1.Union(spanRange2);
@@ -68,7 +68,7 @@ var spanUnion = spanRange1.Union(spanRange2);
 | **Lifetime** | Managed by GC | Must not escape defining scope |
 | **Performance** | Good general performance | Maximum performance, zero allocations |
 | **Use Case** | General purpose, longer lifetime | High-performance scenarios, temporary operations |
-| **Creation** | `new ArrayRangeSet<T>(ranges)` | `SpanRangeSet.Create<T>(spanOfRanges)` |
+| **Creation** | `new ArrayRangeSet<T>(ranges)` | `new SpanRangeSet<T>(spanOfRanges)` |
 
 ### `ArrayRangeSet<T>`
 
@@ -98,9 +98,11 @@ public readonly ref struct SpanRangeSet<T>
               IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
 ```
 
-Create using the static factory:
+Create using the constructor:
 ```csharp
-var rangeSet = SpanRangeSet.Create<uint>(spanOfRanges);
+Span<Range<uint>> buffer = stackalloc Range<uint>[10];
+// ... populate buffer
+var rangeSet = new SpanRangeSet<uint>(buffer);
 ```
 
 **Operations:**
