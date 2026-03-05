@@ -20,6 +20,10 @@ The library provides two main implementations:
 - Integer types: `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `Int128`, `UInt128`
 - Custom `unmanaged` types implementing the required interfaces
 
+## Requirements
+
+- .NET 8, 9, or 10
+
 ## Installation
 
 ```bash
