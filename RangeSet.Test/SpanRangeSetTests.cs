@@ -425,10 +425,11 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(r2Start, r2End);
         var set2 = new SpanRangeSet<int>(span2);
+        ArgumentNullException.ThrowIfNull(expected);
         var expectedRanges = CreateRangesFromPairs(expected);
-        
+
         var result = set1.Except(set2);
-        
+
         Assert.Equal(expectedRanges, result.ToReadOnlySpan().ToArray());
     }
 

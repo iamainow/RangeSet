@@ -55,6 +55,8 @@ public class ArrayRangeSetTests
     [InlineData(new int[] { 20, 30, 1, 10, 5, 15 }, new int[] { 1, 15, 20, 30 })]
     public void Constructor_FromUnsortedArray_NormalizesAndMerges(int[] input, int[] expected)
     {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(expected);
         var set = new ArrayRangeSet<int>(CreateRangesFromPairs(input));
 
         Assert.Equal(CreateRangesFromPairs(expected), set.ToArray());
@@ -356,6 +358,7 @@ public class ArrayRangeSetTests
     [InlineData(1, 10, 4, 6, 1, 3, 7, 10)]
     public void Except_PartialOverlap_ReturnsCorrectResult(int r1Start, int r1End, int r2Start, int r2End, params int[] expected)
     {
+        ArgumentNullException.ThrowIfNull(expected);
         var set1 = new ArrayRangeSet<int>(new[] { new Range<int>(r1Start, r1End) });
         var set2 = new ArrayRangeSet<int>(new[] { new Range<int>(r2Start, r2End) });
         var expectedRanges = CreateRangesFromPairs(expected);
