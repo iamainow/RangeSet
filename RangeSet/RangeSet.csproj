@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <LangVersion>latest</LangVersion>
     <PackageId>RangeSet</PackageId>
     <Authors>iamainow</Authors>
-    <Description>A high-performance generic range set library for .NET with efficient union, intersection, and difference operations using Span&lt;T&gt;. Optimized for AOT compilation.</Description>
+    <Description>A high-performance generic range set library for .NET 8+ with efficient union, intersection, and difference operations using Span&lt;T&gt;. Optimized for AOT compilation.</Description>
     <PackageTags>range;set;operations;union;intersect;except;aot</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/iamainow/RangeSet</PackageProjectUrl>
