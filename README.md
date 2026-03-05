@@ -4,11 +4,11 @@ A high-performance, generic range set library for .NET with support for union, i
 
 The library provides two main implementations:
 - **`ArrayRangeSet<T>`**: A heap-allocated class for general-purpose use
-- **`SpanRangeSet<T>`**: A stack-only ref struct for high-performance, low-allocation scenarios
+- **`SpanRangeSet<T>`**: A `ref struct` for high-performance, low-allocation scenarios
 
 ## Features
 
-- **Dual Implementation**: Provides both heap-allocated (`ArrayRangeSet<T>`) and stack-only (`SpanRangeSet<T>`) implementations
+- **Dual Implementation**: Provides both heap-allocated (`ArrayRangeSet<T>`) and low-allocation ref struct (`SpanRangeSet<T>`) implementations
 - **Generic Design**: Works with any unmanaged type implementing `IComparable<T>`, `IEquatable<T>`, `IMinMaxValue<T>`, and increment/decrement operators
 - **High Performance**: Uses `Span<T>` and `ref struct` for low-allocation, efficient operations
 - **AOT Compatible**: Fully compatible with .NET Native AOT compilation
@@ -44,7 +44,7 @@ var difference = range1.Except(range2);
 // Find intersection → [3-5, 10-12]
 var intersection = range1.Intersect(range2);
 
-// Example 2: Using SpanRangeSet (stack-only, no heap allocation)
+// Example 2: Using SpanRangeSet (low-allocation, stack-friendly)
 Span<Range<uint>> buffer1 = stackalloc Range<uint>[2];
 buffer1[0] = new Range<uint>(1, 5);
 buffer1[1] = new Range<uint>(10, 20);
@@ -54,8 +54,14 @@ Span<Range<uint>> buffer2 = stackalloc Range<uint>[1];
 buffer2[0] = new Range<uint>(3, 12);
 var spanRange2 = new SpanRangeSet<uint>(buffer2);
 
-// Operations work the same way
-var spanUnion = spanRange1.Union(spanRange2);
+// Union requires a caller-provided result buffer (enables zero-allocation)
+int unionSize = SpanRangeSet.CalculateUnionSize(spanRange1.RangesCount, spanRange2.RangesCount);
+Span<Range<uint>> unionBuffer = stackalloc Range<uint>[unionSize];
+var spanUnion = spanRange1.Union(spanRange2, unionBuffer);
+
+// Except and Intersect allocate the result buffer internally
+var spanDiff = spanRange1.Except(spanRange2);
+var spanIntersect = spanRange1.Intersect(spanRange2);
 ```
 
 ## Core Types
@@ -64,10 +70,10 @@ var spanUnion = spanRange1.Union(spanRange2);
 
 | Feature | `ArrayRangeSet<T>` | `SpanRangeSet<T>` |
 |---------|-------------------|-------------------|
-| **Allocation** | Heap-allocated | Stack-only (no heap allocation) |
+| **Allocation** | Heap-allocated | `Union` is zero-allocation with caller-provided buffer; `Except`/`Intersect` allocate result internally |
 | **Lifetime** | Managed by GC | Must not escape defining scope |
-| **Performance** | Good general performance | Maximum performance, zero allocations |
-| **Use Case** | General purpose, longer lifetime | High-performance scenarios, temporary operations |
+| **Performance** | Good general performance | Lower GC pressure; best for temporary operations |
+| **Use Case** | General purpose, longer lifetime | High-performance scenarios, hot paths |
 | **Creation** | `new ArrayRangeSet<T>(ranges)` | `new SpanRangeSet<T>(spanOfRanges)` |
 
 ### `ArrayRangeSet<T>`
@@ -90,7 +96,7 @@ public class ArrayRangeSet<T>
 
 ### `SpanRangeSet<T>`
 
-A stack-only, low-allocation range set ref struct for high-performance scenarios.
+A low-allocation range set ref struct for high-performance scenarios. Cannot escape its defining scope.
 
 ```csharp
 public readonly ref struct SpanRangeSet<T>
@@ -98,7 +104,7 @@ public readonly ref struct SpanRangeSet<T>
               IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>
 ```
 
-Create using the constructor:
+Create using the constructor (the provided span is normalized in-place):
 ```csharp
 Span<Range<uint>> buffer = stackalloc Range<uint>[10];
 // ... populate buffer
@@ -106,12 +112,24 @@ var rangeSet = new SpanRangeSet<uint>(buffer);
 ```
 
 **Operations:**
-- `Union()` - Combine two range sets
-- `Except()` - Subtract one range set from another
-- `Intersect()` - Find common ranges between two sets
+- `Union(other, resultBuffer)` - Combine two range sets into a caller-provided buffer (zero-allocation)
+- `Except(other)` - Subtract one range set from another (allocates result internally)
+- `Intersect(other)` - Find common ranges between two sets (allocates result internally)
 - `ToArray()` - Convert to array of `Range<T>`
 - `ToReadOnlySpan()` - Access underlying span
 - `RangesCount` - Get the number of ranges in the set
+
+### `SpanRangeSet` (static helper)
+
+Provides buffer size calculation helpers for use with `SpanRangeSet<T>`:
+
+```csharp
+int unionSize     = SpanRangeSet.CalculateUnionSize(set1.RangesCount, set2.RangesCount);
+int exceptSize    = SpanRangeSet.CalculateExceptSize(set1.RangesCount, set2.RangesCount);
+int intersectSize = SpanRangeSet.CalculateIntersectSize(set1.RangesCount, set2.RangesCount);
+```
+
+Use these to allocate (or stackalloc) the correct buffer size before calling operations.
 
 ### `Range<T>`
 
@@ -130,13 +148,14 @@ Console.WriteLine(range); // "1 - 100"
 
 ### `RangeOperations`
 
-Low-level helper class for range operations on spans. Provides methods for:
+Low-level static helper class for range operations on spans. Provides methods for:
 - `UnionNormalizedNormalized()` - Union of two normalized range sets
-- `ExceptNormalizedSorted()` - Difference between normalized and sorted ranges
+- `ExceptNormalizedSorted()` - Difference between a normalized and a sorted range set
 - `IntersectNormalizedNormalized()` - Intersection of two normalized range sets
-- `NormalizeUnsorted()` - Normalize unsorted ranges
-- `NormalizeSorted()` - Normalize sorted ranges
+- `NormalizeUnsorted()` - Sort and normalize an unsorted span of ranges in-place; returns the new length
+- `NormalizeSorted()` - Normalize a sorted (but possibly overlapping/adjacent) span in-place; returns the new length
 - `Sort()` - Sort ranges by start value
+- `CalcIntersectBufferLength()` - Calculate the required result buffer length for an intersection
 
 ## Type Requirements
 
@@ -160,7 +179,7 @@ public readonly unmanaged struct MyType :
 
 The library is optimized for high-performance scenarios:
 
-- **Low-allocation**: Uses `Span<T>` for efficient processing with minimal heap allocations
+- **Low-allocation**: Uses `Span<T>` for efficient processing; `SpanRangeSet<T>.Union` supports fully zero-allocation operation via caller-provided buffers
 - **Normalized storage**: Ranges are always stored sorted, non-overlapping, and non-adjacent
 - **Efficient algorithms**: O(n) union, intersection, and difference operations
 - **AOT ready**: No reflection or dynamic code generation
