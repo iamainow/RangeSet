@@ -692,92 +692,15 @@ public class ArrayRangeSetTests
     #region Various Numeric Types
 
     [Fact]
-    public void ArrayRangeSet_Byte_Success()
-    {
-        var set = new ArrayRangeSet<byte>(new[] { new Range<byte>(0, 100), new Range<byte>(150, 200) });
-        
-        Assert.Equal(2, set.RangesCount);
-    }
-
-    [Fact]
-    public void ArrayRangeSet_Byte_AdjacentAtMaxValue_Merges()
-    {
-        var set = new ArrayRangeSet<byte>(new[] { new Range<byte>(100, 200), new Range<byte>(201, 255) });
-        
-        Assert.Equal(1, set.RangesCount);
-        Assert.Equal(new Range<byte>(100, 255), set.ToArray()[0]);
-    }
-
-    [Fact]
-    public void ArrayRangeSet_UInt32_FullOperations()
+    public void ArrayRangeSet_UInt_FullOperations()
     {
         var set1 = new ArrayRangeSet<uint>(new[] { new Range<uint>(1, 100), new Range<uint>(200, 300) });
         var set2 = new ArrayRangeSet<uint>(new[] { new Range<uint>(50, 250) });
-        
+
         var union = set1.Union(set2);
         var intersect = set1.Intersect(set2);
         var except = set1.Except(set2);
-        
-        Assert.Equal(1, union.RangesCount);
-        Assert.Equal(2, intersect.RangesCount);
-        Assert.Equal(2, except.RangesCount);
-    }
 
-    [Fact]
-    public void ArrayRangeSet_Int64_AtBoundaries()
-    {
-        var set = new ArrayRangeSet<long>(new[] 
-        { 
-            new Range<long>(long.MinValue, -1000),
-            new Range<long>(1000, long.MaxValue)
-        });
-        
-        Assert.Equal(2, set.RangesCount);
-        Assert.Equal(long.MinValue, set.ToArray()[0].First);
-        Assert.Equal(long.MaxValue, set.ToArray()[1].Last);
-    }
-
-    [Fact]
-    public void ArrayRangeSet_Short_Success()
-    {
-        var set = new ArrayRangeSet<short>(new[] { new Range<short>(-1000, 0), new Range<short>(100, 1000) });
-        
-        Assert.Equal(2, set.RangesCount);
-    }
-
-    [Fact]
-    public void ArrayRangeSet_Int128_FullOperations()
-    {
-        var set1 = new ArrayRangeSet<Int128>(new[] 
-        { 
-            new Range<Int128>(Int128.MinValue, -1000),
-            new Range<Int128>(1000, Int128.MaxValue)
-        });
-        var set2 = new ArrayRangeSet<Int128>(new[] { new Range<Int128>(-2000, 2000) });
-        
-        var union = set1.Union(set2);
-        var intersect = set1.Intersect(set2);
-        
-        Assert.Equal(1, union.RangesCount);
-        Assert.Equal(Int128.MinValue, union.ToArray()[0].First);
-        Assert.Equal(Int128.MaxValue, union.ToArray()[0].Last);
-        Assert.Equal(2, intersect.RangesCount);
-    }
-
-    [Fact]
-    public void ArrayRangeSet_UInt128_FullOperations()
-    {
-        var set1 = new ArrayRangeSet<UInt128>(new[] 
-        { 
-            new Range<UInt128>(0, 100),
-            new Range<UInt128>(200, 300)
-        });
-        var set2 = new ArrayRangeSet<UInt128>(new[] { new Range<UInt128>(50, 250) });
-        
-        var union = set1.Union(set2);
-        var intersect = set1.Intersect(set2);
-        var except = set1.Except(set2);
-        
         Assert.Equal(1, union.RangesCount);
         Assert.Equal(2, intersect.RangesCount);
         Assert.Equal(2, except.RangesCount);

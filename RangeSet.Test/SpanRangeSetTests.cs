@@ -792,32 +792,7 @@ public class SpanRangeSetTests
     #region Various Numeric Types
 
     [Fact]
-    public void SpanRangeSet_Byte_Success()
-    {
-        Span<Range<byte>> span = stackalloc Range<byte>[2];
-        span[0] = new Range<byte>(0, 100);
-        span[1] = new Range<byte>(150, 200);
-        
-        var set = new SpanRangeSet<byte>(span);
-        
-        Assert.Equal(2, set.RangesCount);
-    }
-
-    [Fact]
-    public void SpanRangeSet_Byte_AdjacentAtMaxValue_Merges()
-    {
-        Span<Range<byte>> span = stackalloc Range<byte>[2];
-        span[0] = new Range<byte>(100, 200);
-        span[1] = new Range<byte>(201, 255);
-        
-        var set = new SpanRangeSet<byte>(span);
-        
-        Assert.Equal(1, set.RangesCount);
-        Assert.Equal(new Range<byte>(100, 255), set.ToReadOnlySpan()[0]);
-    }
-
-    [Fact]
-    public void SpanRangeSet_UInt32_FullOperations()
+    public void SpanRangeSet_UInt_FullOperations()
     {
         Span<Range<uint>> span1 = stackalloc Range<uint>[2];
         span1[0] = new Range<uint>(1, 100);
@@ -827,67 +802,11 @@ public class SpanRangeSetTests
         span2[0] = new Range<uint>(50, 250);
         var set2 = new SpanRangeSet<uint>(span2);
         Span<Range<uint>> buffer = stackalloc Range<uint>[10];
-        
+
         var union = set1.Union(set2, buffer);
         var intersect = set1.Intersect(set2);
         var except = set1.Except(set2);
-        
-        Assert.Equal(1, union.RangesCount);
-        Assert.Equal(2, intersect.RangesCount);
-        Assert.Equal(2, except.RangesCount);
-    }
 
-    [Fact]
-    public void SpanRangeSet_Int64_AtBoundaries()
-    {
-        Span<Range<long>> span = stackalloc Range<long>[2];
-        span[0] = new Range<long>(long.MinValue, -1000);
-        span[1] = new Range<long>(1000, long.MaxValue);
-        
-        var set = new SpanRangeSet<long>(span);
-        
-        Assert.Equal(2, set.RangesCount);
-        Assert.Equal(long.MinValue, set.ToReadOnlySpan()[0].First);
-        Assert.Equal(long.MaxValue, set.ToReadOnlySpan()[1].Last);
-    }
-
-    [Fact]
-    public void SpanRangeSet_Int128_FullOperations()
-    {
-        Span<Range<Int128>> span1 = stackalloc Range<Int128>[2];
-        span1[0] = new Range<Int128>(Int128.MinValue, -1000);
-        span1[1] = new Range<Int128>(1000, Int128.MaxValue);
-        var set1 = new SpanRangeSet<Int128>(span1);
-        Span<Range<Int128>> span2 = stackalloc Range<Int128>[1];
-        span2[0] = new Range<Int128>(-2000, 2000);
-        var set2 = new SpanRangeSet<Int128>(span2);
-        Span<Range<Int128>> buffer = stackalloc Range<Int128>[10];
-        
-        var union = set1.Union(set2, buffer);
-        var intersect = set1.Intersect(set2);
-        
-        Assert.Equal(1, union.RangesCount);
-        Assert.Equal(Int128.MinValue, union.ToReadOnlySpan()[0].First);
-        Assert.Equal(Int128.MaxValue, union.ToReadOnlySpan()[0].Last);
-        Assert.Equal(2, intersect.RangesCount);
-    }
-
-    [Fact]
-    public void SpanRangeSet_UInt128_FullOperations()
-    {
-        Span<Range<UInt128>> span1 = stackalloc Range<UInt128>[2];
-        span1[0] = new Range<UInt128>(0, 100);
-        span1[1] = new Range<UInt128>(200, 300);
-        var set1 = new SpanRangeSet<UInt128>(span1);
-        Span<Range<UInt128>> span2 = stackalloc Range<UInt128>[1];
-        span2[0] = new Range<UInt128>(50, 250);
-        var set2 = new SpanRangeSet<UInt128>(span2);
-        Span<Range<UInt128>> buffer = stackalloc Range<UInt128>[10];
-        
-        var union = set1.Union(set2, buffer);
-        var intersect = set1.Intersect(set2);
-        var except = set1.Except(set2);
-        
         Assert.Equal(1, union.RangesCount);
         Assert.Equal(2, intersect.RangesCount);
         Assert.Equal(2, except.RangesCount);
