@@ -58,14 +58,18 @@ Span<Range<uint>> buffer2 = stackalloc Range<uint>[1];
 buffer2[0] = new Range<uint>(3, 12);
 var spanRange2 = new SpanRangeSet<uint>(buffer2);
 
-// Union requires a caller-provided result buffer (enables zero-allocation)
+// All operations require a caller-provided result buffer (zero-allocation)
 int unionSize = SpanRangeSet.CalculateUnionSize(spanRange1.RangesCount, spanRange2.RangesCount);
 Span<Range<uint>> unionBuffer = stackalloc Range<uint>[unionSize];
 var spanUnion = spanRange1.Union(spanRange2, unionBuffer);
 
-// Except and Intersect allocate the result buffer internally
-var spanDiff = spanRange1.Except(spanRange2);
-var spanIntersect = spanRange1.Intersect(spanRange2);
+int exceptSize = SpanRangeSet.CalculateExceptSize(spanRange1.RangesCount, spanRange2.RangesCount);
+Span<Range<uint>> exceptBuffer = stackalloc Range<uint>[exceptSize];
+var spanDiff = spanRange1.Except(spanRange2, exceptBuffer);
+
+int intersectSize = SpanRangeSet.CalculateIntersectSize(spanRange1.RangesCount, spanRange2.RangesCount);
+Span<Range<uint>> intersectBuffer = stackalloc Range<uint>[intersectSize];
+var spanIntersect = spanRange1.Intersect(spanRange2, intersectBuffer);
 ```
 
 ## Core Types
@@ -74,7 +78,7 @@ var spanIntersect = spanRange1.Intersect(spanRange2);
 
 | Feature | `ArrayRangeSet<T>` | `SpanRangeSet<T>` |
 |---------|-------------------|-------------------|
-| **Allocation** | Heap-allocated | `Union` is zero-allocation with caller-provided buffer; `Except`/`Intersect` allocate result internally |
+| **Allocation** | Heap-allocated | Zero-allocation with caller-provided buffers for all operations |
 | **Lifetime** | Managed by GC | Must not escape defining scope |
 | **Performance** | Good general performance | Lower GC pressure; best for temporary operations |
 | **Use Case** | General purpose, longer lifetime | High-performance scenarios, hot paths |
@@ -117,8 +121,8 @@ var rangeSet = new SpanRangeSet<uint>(buffer);
 
 **Operations:**
 - `Union(other, resultBuffer)` - Combine two range sets into a caller-provided buffer (zero-allocation)
-- `Except(other)` - Subtract one range set from another (allocates result internally)
-- `Intersect(other)` - Find common ranges between two sets (allocates result internally)
+- `Except(other, resultBuffer)` - Subtract one range set from another into a caller-provided buffer (zero-allocation)
+- `Intersect(other, resultBuffer)` - Find common ranges between two sets into a caller-provided buffer (zero-allocation)
 - `ToArray()` - Convert to array of `Range<T>`
 - `ToReadOnlySpan()` - Access underlying span
 - `RangesCount` - Get the number of ranges in the set
@@ -183,7 +187,7 @@ public readonly unmanaged struct MyType :
 
 The library is optimized for high-performance scenarios:
 
-- **Low-allocation**: Uses `Span<T>` for efficient processing; `SpanRangeSet<T>.Union` supports fully zero-allocation operation via caller-provided buffers
+- **Zero-allocation**: `SpanRangeSet<T>` supports fully zero-allocation operation for all operations (Union, Except, Intersect) via caller-provided `Span<T>` buffers
 - **Normalized storage**: Ranges are always stored sorted, non-overlapping, and non-adjacent
 - **Efficient algorithms**: O(n) union, intersection, and difference operations
 - **AOT ready**: No reflection or dynamic code generation

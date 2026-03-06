@@ -336,9 +336,9 @@ public class SpanRangeSetTests
     {
         var set1 = new SpanRangeSet<int>();
         var set2 = new SpanRangeSet<int>();
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -349,9 +349,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span = stackalloc Range<int>[1];
         span[0] = new Range<int>(1, 10);
         var other = new SpanRangeSet<int>(span);
-        
-        var result = empty.Except(other);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = empty.Except(other, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -362,9 +362,9 @@ public class SpanRangeSetTests
         span[0] = new Range<int>(1, 10);
         var set = new SpanRangeSet<int>(span);
         var empty = new SpanRangeSet<int>();
-        
-        var result = set.Except(empty);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set.Except(empty, buffer);
+
         Assert.Equal(set.ToReadOnlySpan().ToArray(), result.ToReadOnlySpan().ToArray());
     }
 
@@ -377,9 +377,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(20, 30);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(set1.ToReadOnlySpan().ToArray(), result.ToReadOnlySpan().ToArray());
     }
 
@@ -392,9 +392,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(1, 10);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -407,9 +407,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(1, 10);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -427,8 +427,8 @@ public class SpanRangeSetTests
         var set2 = new SpanRangeSet<int>(span2);
         ArgumentNullException.ThrowIfNull(expected);
         var expectedRanges = CreateRangesFromPairs(expected);
-
-        var result = set1.Except(set2);
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set1.Except(set2, buffer);
 
         Assert.Equal(expectedRanges, result.ToReadOnlySpan().ToArray());
     }
@@ -443,9 +443,9 @@ public class SpanRangeSetTests
         span2[0] = new Range<int>(5, 8);
         span2[1] = new Range<int>(12, 15);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[3];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(3, result.RangesCount);
         var array = result.ToReadOnlySpan();
         Assert.Equal(new Range<int>(1, 4), array[0]);
@@ -462,9 +462,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(int.MinValue, 0);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(1, result.RangesCount);
         Assert.Equal(new Range<int>(1, 100), result.ToReadOnlySpan()[0]);
     }
@@ -478,9 +478,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(int.MaxValue, int.MaxValue);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Except(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set1.Except(set2, buffer);
+
         Assert.Equal(1, result.RangesCount);
         Assert.Equal(new Range<int>(0, int.MaxValue - 1), result.ToReadOnlySpan()[0]);
     }
@@ -492,8 +492,8 @@ public class SpanRangeSetTests
         span[0] = new Range<int>(1, 10);
         var set = new SpanRangeSet<int>(span);
         var other = new[] { new Range<int>(3, 7) };
-        
-        var result = set.Except(other.AsSpan());
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set.Except(other.AsSpan(), buffer);
         
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new Range<int>(1, 2), result.ToReadOnlySpan()[0]);
@@ -509,9 +509,9 @@ public class SpanRangeSetTests
     {
         var set1 = new SpanRangeSet<int>();
         var set2 = new SpanRangeSet<int>();
-        
-        var result = set1.Intersect(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set1.Intersect(set2, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -522,9 +522,9 @@ public class SpanRangeSetTests
         span[0] = new Range<int>(1, 10);
         var set = new SpanRangeSet<int>(span);
         var empty = new SpanRangeSet<int>();
-        
-        var result = set.Intersect(empty);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set.Intersect(empty, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -535,9 +535,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span = stackalloc Range<int>[1];
         span[0] = new Range<int>(1, 10);
         var other = new SpanRangeSet<int>(span);
-        
-        var result = empty.Intersect(other);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = empty.Intersect(other, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -550,9 +550,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(20, 30);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Intersect(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set1.Intersect(set2, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -565,9 +565,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(1, 10);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Intersect(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set1.Intersect(set2, buffer);
+
         Assert.Equal(new Range<int>(1, 10), result.ToReadOnlySpan()[0]);
     }
 
@@ -580,9 +580,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(5, 15);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Intersect(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set1.Intersect(set2, buffer);
+
         Assert.Equal(new Range<int>(5, 10), result.ToReadOnlySpan()[0]);
     }
 
@@ -595,9 +595,9 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(3, 7);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Intersect(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set1.Intersect(set2, buffer);
+
         Assert.Equal(new Range<int>(3, 7), result.ToReadOnlySpan()[0]);
     }
 
@@ -611,9 +611,10 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new Range<int>(5, 25);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result1 = set1.Intersect(set2);
-        var result2 = set2.Intersect(set1);
+        Span<Range<int>> buffer1 = stackalloc Range<int>[2];
+        Span<Range<int>> buffer2 = stackalloc Range<int>[2];
+        var result1 = set1.Intersect(set2, buffer1);
+        var result2 = set2.Intersect(set1, buffer2);
         
         Assert.Equal(result1.ToReadOnlySpan().ToArray(), result2.ToReadOnlySpan().ToArray());
     }
@@ -630,9 +631,9 @@ public class SpanRangeSetTests
         span2[0] = new Range<int>(3, 12);
         span2[1] = new Range<int>(18, 22);
         var set2 = new SpanRangeSet<int>(span2);
-        
-        var result = set1.Intersect(set2);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[4];
+        var result = set1.Intersect(set2, buffer);
+
         Assert.Equal(3, result.RangesCount);
         var array = result.ToReadOnlySpan();
         Assert.Equal(new Range<int>(3, 5), array[0]);
@@ -648,8 +649,8 @@ public class SpanRangeSetTests
         span[1] = new Range<int>(20, 30);
         var set = new SpanRangeSet<int>(span);
         var other = new[] { new Range<int>(5, 25) };
-        
-        var result = set.Intersect(other.AsSpan());
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+        var result = set.Intersect(other.AsSpan(), buffer);
         
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new Range<int>(5, 10), result.ToReadOnlySpan()[0]);
@@ -664,8 +665,8 @@ public class SpanRangeSetTests
         span[1] = new Range<int>(20, 30);
         var set = new SpanRangeSet<int>(span);
         var unsorted = new[] { new Range<int>(25, 35), new Range<int>(5, 15) };
-        
-        var result = set.Intersect(unsorted.AsSpan());
+        Span<Range<int>> buffer = stackalloc Range<int>[3];
+        var result = set.Intersect(unsorted.AsSpan(), buffer);
         
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new Range<int>(5, 10), result.ToReadOnlySpan()[0]);
@@ -680,7 +681,8 @@ public class SpanRangeSetTests
         span[1] = new Range<int>(20, 30);
         var set = new SpanRangeSet<int>(span);
         
-        var result = set.Intersect(Span<Range<int>>.Empty);
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var result = set.Intersect(Span<Range<int>>.Empty, buffer);
         
         Assert.Equal(0, result.RangesCount);
     }
@@ -711,8 +713,9 @@ public class SpanRangeSetTests
         var set = new SpanRangeSet<int>(span);
         var empty = new SpanRangeSet<int>();
         
-        var intersectWithEmpty = set.Intersect(empty);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var intersectWithEmpty = set.Intersect(empty, buffer);
+
         Assert.Equal(0, intersectWithEmpty.RangesCount);
     }
 
@@ -724,8 +727,9 @@ public class SpanRangeSetTests
         var set = new SpanRangeSet<int>(span);
         var empty = new SpanRangeSet<int>();
         
-        var exceptEmpty = set.Except(empty);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+        var exceptEmpty = set.Except(empty, buffer);
+
         Assert.Equal(set.ToReadOnlySpan().ToArray(), exceptEmpty.ToReadOnlySpan().ToArray());
     }
 
@@ -736,9 +740,9 @@ public class SpanRangeSetTests
         span[0] = new Range<int>(1, 10);
         span[1] = new Range<int>(20, 30);
         var set = new SpanRangeSet<int>(span);
-        
-        var result = set.Except(set);
-        
+        Span<Range<int>> buffer = stackalloc Range<int>[4];
+        var result = set.Except(set, buffer);
+
         Assert.Equal(0, result.RangesCount);
     }
 
@@ -759,8 +763,8 @@ public class SpanRangeSetTests
         span3[0] = new Range<int>(8, 12);
         var set3 = new SpanRangeSet<int>(span3);
         Span<Range<int>> buffer = stackalloc Range<int>[10];
-        
-        var result = set1.Union(set2, buffer).Except(set3);
+        Span<Range<int>> exceptBuffer = stackalloc Range<int>[3];
+        var result = set1.Union(set2, buffer).Except(set3, exceptBuffer);
         
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new Range<int>(1, 7), result.ToReadOnlySpan()[0]);
@@ -780,8 +784,8 @@ public class SpanRangeSetTests
         span3[0] = new Range<int>(25, 35);
         var set3 = new SpanRangeSet<int>(span3);
         Span<Range<int>> buffer = stackalloc Range<int>[10];
-
-        var result = set1.Intersect(set2).Union(set3, buffer);
+        Span<Range<int>> intersectBuffer = stackalloc Range<int>[1];
+        var result = set1.Intersect(set2, intersectBuffer).Union(set3, buffer);
         
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new Range<int>(5, 15), result.ToReadOnlySpan()[0]);
@@ -804,9 +808,11 @@ public class SpanRangeSetTests
         var set2 = new SpanRangeSet<uint>(span2);
         Span<Range<uint>> buffer = stackalloc Range<uint>[10];
 
+        Span<Range<uint>> intersectBuffer = stackalloc Range<uint>[2];
+        Span<Range<uint>> exceptBuffer = stackalloc Range<uint>[3];
         var union = set1.Union(set2, buffer);
-        var intersect = set1.Intersect(set2);
-        var except = set1.Except(set2);
+        var intersect = set1.Intersect(set2, intersectBuffer);
+        var except = set1.Except(set2, exceptBuffer);
 
         Assert.Equal(1, union.RangesCount);
         Assert.Equal(2, intersect.RangesCount);

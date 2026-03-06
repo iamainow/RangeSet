@@ -72,14 +72,13 @@ public readonly ref struct SpanRangeSet<T>
         return new SpanRangeSet<T>((ReadOnlySpan<Range<T>>)resultBuffer[..length]);
     }
 
-    public SpanRangeSet<T> Except(scoped SpanRangeSet<T> other)
+    public SpanRangeSet<T> Except(scoped SpanRangeSet<T> other, Span<Range<T>> resultBuffer)
     {
-        Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + other._items.Length];
         int length = RangeOperations.ExceptNormalizedSorted(this._items, other._items, resultBuffer);
         return new SpanRangeSet<T>((ReadOnlySpan<Range<T>>)resultBuffer[..length]);
     }
 
-    public SpanRangeSet<T> Except(scoped ReadOnlySpan<Range<T>> other)
+    public SpanRangeSet<T> Except(scoped ReadOnlySpan<Range<T>> other, Span<Range<T>> resultBuffer)
     {
         using SpanOwner<Range<T>> otherSpanOwner = SpanOwner<Range<T>>.Allocate(other.Length);
         Span<Range<T>> otherSpan = otherSpanOwner.Span;
@@ -87,24 +86,22 @@ public readonly ref struct SpanRangeSet<T>
         other.CopyTo(otherSpan);
         RangeOperations.Sort(otherSpan);
 
-        Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + otherSpan.Length];
         int length = RangeOperations.ExceptNormalizedSorted(this._items, otherSpan, resultBuffer);
         return new SpanRangeSet<T>((ReadOnlySpan<Range<T>>)resultBuffer[..length]);
     }
 
-    public SpanRangeSet<T> Intersect(scoped SpanRangeSet<T> other)
+    public SpanRangeSet<T> Intersect(scoped SpanRangeSet<T> other, Span<Range<T>> resultBuffer)
     {
         if (this._items.Length == 0 || other._items.Length == 0)
         {
             return new SpanRangeSet<T>();
         }
 
-        Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + other._items.Length - 1];
         int length = RangeOperations.IntersectNormalizedNormalized(this._items, other._items, resultBuffer);
         return new SpanRangeSet<T>((ReadOnlySpan<Range<T>>)resultBuffer[..length]);
     }
 
-    public SpanRangeSet<T> Intersect(scoped ReadOnlySpan<Range<T>> other)
+    public SpanRangeSet<T> Intersect(scoped ReadOnlySpan<Range<T>> other, Span<Range<T>> resultBuffer)
     {
         if (this._items.Length == 0 || other.Length == 0)
         {
@@ -118,7 +115,6 @@ public readonly ref struct SpanRangeSet<T>
         int otherSpanLength = RangeOperations.NormalizeUnsorted(otherSpan);
         otherSpan = otherSpan[..otherSpanLength];
 
-        Span<Range<T>> resultBuffer = new Range<T>[this._items.Length + otherSpan.Length - 1];
         int length = RangeOperations.IntersectNormalizedNormalized(this._items, otherSpan, resultBuffer);
         return new SpanRangeSet<T>((ReadOnlySpan<Range<T>>)resultBuffer[..length]);
     }

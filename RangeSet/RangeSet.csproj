@@ -3,7 +3,7 @@
     <LangVersion>latest</LangVersion>
     <PackageId>RangeSet</PackageId>
     <Authors>iamainow</Authors>
-    <Description>A high-performance generic range set library for .NET 8+ with efficient union, intersection, and difference operations using Span&lt;T&gt;. Optimized for AOT compilation.</Description>
+    <Description>A high-performance generic range set library for .NET with zero-allocation union, intersection, and difference operations. All SpanRangeSet&lt;T&gt; operations accept caller-provided Span&lt;T&gt; result buffers, enabling fully stackalloc-based usage. AOT compatible.</Description>
     <PackageTags>range;set;operations;union;intersect;except;aot</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/iamainow/RangeSet</PackageProjectUrl>
