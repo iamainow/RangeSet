@@ -26,7 +26,7 @@ dotnet pack RangeSet/RangeSet.csproj --configuration Release
 
 ## Architecture
 
-This is a .NET library (net10.0) providing high-performance generic range set operations. Three projects:
+This is a .NET library (multi-targeted: `net8.0;net9.0;net10.0`) providing high-performance generic range set operations. Three projects:
 
 - **`RangeSet/`** - The library (NuGet package)
 - **`RangeSet.Test/`** - xUnit tests
@@ -38,12 +38,20 @@ This is a .NET library (net10.0) providing high-performance generic range set op
 - **`RangeOperations`** - Static low-level algorithms operating on `Span<Range<T>>`. All operations require non-overlapping inputs. Key distinction in naming: `Unsorted` (arbitrary), `Sorted` (sorted but may overlap/be adjacent), `Normalized` (sorted, non-overlapping, non-adjacent).
 - **`ArrayRangeSet<T>`** - Heap-allocated class wrapping a normalized `Range<T>[]`. Operations return new instances.
 - **`SpanRangeSet<T>`** - `ref struct` wrapping a caller-provided `Span<Range<T>>`. Constructor normalizes the span in-place. `Union` requires a caller-provided result buffer; `Except`/`Intersect` allocate internally.
-- **`SpanList<T>`** - Internal `ref struct` list backed by a `Span<T>`. Used by `RangeOperations` to build results into pre-allocated buffers without heap allocation.
+- **`SpanList<T>`** - Public `ref struct` list backed by a `Span<T>`. Used by `RangeOperations` to build results into pre-allocated buffers without heap allocation.
 - **`RangeComparer<T>`** - Singleton `IComparer<Range<T>>` used for sorting.
 
 ### Type constraint pattern
 
 `ArrayRangeSet<T>` and `SpanRangeSet<T>` require: `unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>`. The `IMinMaxValue<T>` constraint is needed for boundary handling in union (to avoid overflow when checking adjacency at `MaxValue`).
+
+### Dependencies
+
+- **`CommunityToolkit.HighPerformance`** - Used in `SpanRangeSet<T>` for `MemoryOwner<T>` (pooled heap buffers) in `Except` and `Intersect` results.
+
+### Build notes
+
+`TreatWarningsAsErrors` is enabled globally (via `Directory.Build.props`). All analyzer warnings are errors — this includes CA/IDE rules at `AnalysisLevel=latest-all`. Suppress with `#pragma warning disable` or `[SuppressMessage]` only when necessary.
 
 ### Key design invariants
 
