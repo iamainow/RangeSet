@@ -1,4 +1,6 @@
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
 
@@ -10,12 +12,8 @@ public class BenchmarkManualConfig : ManualConfig
     {
         AddJob(Job.Default
             .DontEnforcePowerPlan()
-            .WithRuntime(CoreRuntime.Core10_0))
-            .AddDiagnoser(new BenchmarkDotNet.Diagnosers.MemoryDiagnoser(new BenchmarkDotNet.Diagnosers.MemoryDiagnoserConfig()))
-            .AddDiagnoser(new BenchmarkDotNet.Diagnosers.ExceptionDiagnoser(new BenchmarkDotNet.Attributes.ExceptionDiagnoserConfig(false)));
-
-        //AddJob(Job.Default
-        //    .DontEnforcePowerPlan()
-        //    .WithRuntime(NativeAotRuntime.Net10_0));
+            .WithRuntime(CoreRuntime.Core10_0)) // NativeAotRuntime.Net10_0
+            .AddDiagnoser(new MemoryDiagnoser(new MemoryDiagnoserConfig()))
+            .AddDiagnoser(new ExceptionDiagnoser(new ExceptionDiagnoserConfig(false)));
     }
 }

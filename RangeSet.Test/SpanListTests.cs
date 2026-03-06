@@ -639,12 +639,12 @@ public class SpanListTests
         Span<Range<int>> buffer = stackalloc Range<int>[10];
         var list = new SpanList<Range<int>>(buffer);
         
-        list.Add(new Range<int>(1, 10));
-        list.Add(new Range<int>(20, 30));
+        list.Add(new(1, 10));
+        list.Add(new(20, 30));
         
         Assert.Equal(2, list.Count);
-        Assert.Equal(new Range<int>(1, 10), list[0]);
-        Assert.Equal(new Range<int>(20, 30), list[1]);
+        Assert.Equal(new(1, 10), list[0]);
+        Assert.Equal(new(20, 30), list[1]);
     }
 
     #endregion

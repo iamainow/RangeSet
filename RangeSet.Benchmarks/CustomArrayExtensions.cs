@@ -52,8 +52,8 @@ public static class CustomArrayExtensions
                 var t1 = sortedArray[i].Last;
                 var t2 = sortedArray[i + 1].First;
 
-                sortedArray[i] = new Range<T>(sortedArray[i].First, t2);
-                sortedArray[i + 1] = new Range<T>(t1, sortedArray[i + 1].Last);
+                sortedArray[i] = new(sortedArray[i].First, t2);
+                sortedArray[i + 1] = new(t1, sortedArray[i + 1].Last);
             }
         }
     }

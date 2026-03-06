@@ -70,7 +70,7 @@ public class ArrayRangeSetTests
         var set = new ArrayRangeSet<int>(ranges);
         
         Assert.Equal(1, set.RangesCount);
-        Assert.Equal(new Range<int>(1, 20), set.ToArray()[0]);
+        Assert.Equal(new(1, 20), set.ToArray()[0]);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ArrayRangeSetTests
         var set = new ArrayRangeSet<int>(ranges);
         
         Assert.Equal(1, set.RangesCount);
-        Assert.Equal(new Range<int>(1, 10), set.ToArray()[0]);
+        Assert.Equal(new(1, 10), set.ToArray()[0]);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class ArrayRangeSetTests
         var set = new ArrayRangeSet<int>(ranges);
         
         Assert.Equal(1, set.RangesCount);
-        Assert.Equal(new Range<int>(1, 100), set.ToArray()[0]);
+        Assert.Equal(new(1, 100), set.ToArray()[0]);
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class ArrayRangeSetTests
         var span = set.ToReadOnlySpan();
         
         Assert.Equal(2, span.Length);
-        Assert.Equal(new Range<int>(1, 10), span[0]);
-        Assert.Equal(new Range<int>(20, 30), span[1]);
+        Assert.Equal(new(1, 10), span[0]);
+        Assert.Equal(new(20, 30), span[1]);
     }
 
     [Fact]
@@ -190,8 +190,8 @@ public class ArrayRangeSetTests
         var result = set1.Union(set2);
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 10), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(20, 30), result.ToArray()[1]);
+        Assert.Equal(new(1, 10), result.ToArray()[0]);
+        Assert.Equal(new(20, 30), result.ToArray()[1]);
     }
 
     [Fact]
@@ -203,7 +203,7 @@ public class ArrayRangeSetTests
         var result = set1.Union(set2);
         
         Assert.Equal(1, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 15), result.ToArray()[0]);
+        Assert.Equal(new(1, 15), result.ToArray()[0]);
     }
 
     [Fact]
@@ -215,7 +215,7 @@ public class ArrayRangeSetTests
         var result = set1.Union(set2);
         
         Assert.Equal(1, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 20), result.ToArray()[0]);
+        Assert.Equal(new(1, 20), result.ToArray()[0]);
     }
 
     [Fact]
@@ -271,7 +271,7 @@ public class ArrayRangeSetTests
         
         var result = set.Union(span.AsSpan());
         
-        Assert.Equal(new Range<int>(1, 10), result.ToArray()[0]);
+        Assert.Equal(new(1, 10), result.ToArray()[0]);
     }
 
     [Fact]
@@ -283,8 +283,8 @@ public class ArrayRangeSetTests
         var result = set.Union(unsorted.AsSpan());
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 10), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(20, 30), result.ToArray()[1]);
+        Assert.Equal(new(1, 10), result.ToArray()[0]);
+        Assert.Equal(new(20, 30), result.ToArray()[1]);
     }
 
     #endregion
@@ -378,9 +378,9 @@ public class ArrayRangeSetTests
         
         Assert.Equal(3, result.RangesCount);
         var array = result.ToArray();
-        Assert.Equal(new Range<int>(1, 4), array[0]);
-        Assert.Equal(new Range<int>(9, 11), array[1]);
-        Assert.Equal(new Range<int>(16, 20), array[2]);
+        Assert.Equal(new(1, 4), array[0]);
+        Assert.Equal(new(9, 11), array[1]);
+        Assert.Equal(new(16, 20), array[2]);
     }
 
     [Fact]
@@ -392,7 +392,7 @@ public class ArrayRangeSetTests
         var result = set1.Except(set2);
         
         Assert.Equal(1, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 100), result.ToArray()[0]);
+        Assert.Equal(new(1, 100), result.ToArray()[0]);
     }
 
     [Fact]
@@ -404,7 +404,7 @@ public class ArrayRangeSetTests
         var result = set1.Except(set2);
         
         Assert.Equal(1, result.RangesCount);
-        Assert.Equal(new Range<int>(0, int.MaxValue - 1), result.ToArray()[0]);
+        Assert.Equal(new(0, int.MaxValue - 1), result.ToArray()[0]);
     }
 
     [Fact]
@@ -439,8 +439,8 @@ public class ArrayRangeSetTests
         var result = set.Except(span.AsSpan());
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 2), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(8, 10), result.ToArray()[1]);
+        Assert.Equal(new(1, 2), result.ToArray()[0]);
+        Assert.Equal(new(8, 10), result.ToArray()[1]);
     }
 
     #endregion
@@ -494,7 +494,7 @@ public class ArrayRangeSetTests
         
         var result = set1.Intersect(set2);
         
-        Assert.Equal(new Range<int>(1, 10), result.ToArray()[0]);
+        Assert.Equal(new(1, 10), result.ToArray()[0]);
     }
 
     [Fact]
@@ -505,7 +505,7 @@ public class ArrayRangeSetTests
         
         var result = set1.Intersect(set2);
         
-        Assert.Equal(new Range<int>(5, 10), result.ToArray()[0]);
+        Assert.Equal(new(5, 10), result.ToArray()[0]);
     }
 
     [Fact]
@@ -516,7 +516,7 @@ public class ArrayRangeSetTests
         
         var result = set1.Intersect(set2);
         
-        Assert.Equal(new Range<int>(3, 7), result.ToArray()[0]);
+        Assert.Equal(new(3, 7), result.ToArray()[0]);
     }
 
     [Fact]
@@ -541,9 +541,9 @@ public class ArrayRangeSetTests
         
         Assert.Equal(3, result.RangesCount);
         var array = result.ToArray();
-        Assert.Equal(new Range<int>(3, 5), array[0]);
-        Assert.Equal(new Range<int>(10, 12), array[1]);
-        Assert.Equal(new Range<int>(20, 22), array[2]);
+        Assert.Equal(new(3, 5), array[0]);
+        Assert.Equal(new(10, 12), array[1]);
+        Assert.Equal(new(20, 22), array[2]);
     }
 
     [Fact]
@@ -578,8 +578,8 @@ public class ArrayRangeSetTests
         var result = set.Intersect(span.AsSpan());
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(5, 10), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(20, 25), result.ToArray()[1]);
+        Assert.Equal(new(5, 10), result.ToArray()[0]);
+        Assert.Equal(new(20, 25), result.ToArray()[1]);
     }
 
     #endregion
@@ -658,8 +658,8 @@ public class ArrayRangeSetTests
         var result = set1.Union(set2).Except(set3);
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 7), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(13, 15), result.ToArray()[1]);
+        Assert.Equal(new(1, 7), result.ToArray()[0]);
+        Assert.Equal(new(13, 15), result.ToArray()[1]);
     }
 
     [Fact]
@@ -672,8 +672,8 @@ public class ArrayRangeSetTests
         var result = set1.Intersect(set2).Union(set3);
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(5, 15), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(25, 35), result.ToArray()[1]);
+        Assert.Equal(new(5, 15), result.ToArray()[0]);
+        Assert.Equal(new(25, 35), result.ToArray()[1]);
     }
 
     [Fact]
@@ -686,8 +686,8 @@ public class ArrayRangeSetTests
         var result = set1.Except(set2).Intersect(set3);
         
         Assert.Equal(2, result.RangesCount);
-        Assert.Equal(new Range<int>(1, 4), result.ToArray()[0]);
-        Assert.Equal(new Range<int>(11, 15), result.ToArray()[1]);
+        Assert.Equal(new(1, 4), result.ToArray()[0]);
+        Assert.Equal(new(11, 15), result.ToArray()[1]);
     }
 
     #endregion
@@ -741,7 +741,7 @@ public class ArrayRangeSetTests
         var ranges = new Range<int>[pairs.Length / 2];
         for (int i = 0; i < pairs.Length / 2; i++)
         {
-            ranges[i] = new Range<int>(pairs[i * 2], pairs[i * 2 + 1]);
+            ranges[i] = new(pairs[i * 2], pairs[i * 2 + 1]);
         }
         return ranges;
     }

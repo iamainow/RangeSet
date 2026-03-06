@@ -38,7 +38,7 @@ public static class RangeOperations
             if (last.Last.CompareTo(current.First) >= 0)
             {
                 // Overlapping - merge
-                last = new Range<T>(last.First, Max(last.Last, current.Last));
+                last = new(last.First, Max(last.Last, current.Last));
             }
             else
             {
@@ -49,7 +49,7 @@ public static class RangeOperations
                 if (nextAfterLast.Equals(current.First))
                 {
                     // Adjacent - merge (current.Last > last.Last since not overlapping)
-                    last = new Range<T>(last.First, current.Last);
+                    last = new(last.First, current.Last);
                 }
                 else
                 {
@@ -102,7 +102,7 @@ public static class RangeOperations
             return normalized1.Length;
         }
 
-        SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
+        SpanList<Range<T>> resultList = new(result);
         int index1 = 0;
         int index2 = 0;
 
@@ -141,7 +141,7 @@ public static class RangeOperations
             ref var last = ref resultList.Last();
             if (T.MaxValue.Equals(last.Last))
             {
-                last = new Range<T>(last.First, T.MaxValue);
+                last = new(last.First, T.MaxValue);
                 return resultList.Count;
             }
             else
@@ -150,7 +150,7 @@ public static class RangeOperations
                 ++afterLastLast;
                 if (afterLastLast.CompareTo(current.First) >= 0)
                 {
-                    last = new Range<T>(last.First, Max(last.Last, current.Last));
+                    last = new(last.First, Max(last.Last, current.Last));
                 }
                 else
                 {
@@ -166,7 +166,7 @@ public static class RangeOperations
             ref var last = ref resultList.Last();
             if (T.MaxValue.Equals(last.Last))
             {
-                last = new Range<T>(last.First, T.MaxValue);
+                last = new(last.First, T.MaxValue);
                 return resultList.Count;
             }
             else
@@ -175,7 +175,7 @@ public static class RangeOperations
                 ++afterLastLast;
                 if (afterLastLast.CompareTo(current.First) >= 0)
                 {
-                    last = new Range<T>(last.First, Max(last.Last, current.Last));
+                    last = new(last.First, Max(last.Last, current.Last));
                     ++index2;
                 }
                 else
@@ -193,7 +193,7 @@ public static class RangeOperations
             ref var last = ref resultList.Last();
             if (T.MaxValue.Equals(last.Last))
             {
-                last = new Range<T>(last.First, T.MaxValue);
+                last = new(last.First, T.MaxValue);
                 return resultList.Count;
             }
             else
@@ -202,7 +202,7 @@ public static class RangeOperations
                 ++afterLastLast;
                 if (afterLastLast.CompareTo(current.First) >= 0)
                 {
-                    last = new Range<T>(last.First, Max(last.Last, current.Last));
+                    last = new(last.First, Max(last.Last, current.Last));
                     ++index1;
                 }
                 else
@@ -280,7 +280,7 @@ public static class RangeOperations
             return normalized.Length;
         }
 
-        SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
+        SpanList<Range<T>> resultList = new(result);
 
         int i = 0;
         int j = 0;
@@ -376,7 +376,7 @@ public static class RangeOperations
             return 0;
         }
         
-        SpanList<Range<T>> resultList = new SpanList<Range<T>>(result);
+        SpanList<Range<T>> resultList = new(result);
         int index1 = 0;
         int index2 = 0;
         while (index1 < normalized1.Length && index2 < normalized2.Length)
@@ -398,7 +398,7 @@ public static class RangeOperations
                 // Ranges overlap
                 T start = Max(item1.First, item2.First);
                 T end = Min(item1.Last, item2.Last);
-                resultList.Add(new Range<T>(start, end));
+                resultList.Add(new(start, end));
 
                 int comparing = item1.Last.CompareTo(item2.Last);
                 if (comparing <= 0)

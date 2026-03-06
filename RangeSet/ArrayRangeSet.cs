@@ -60,7 +60,7 @@ public class ArrayRangeSet<T>
             other.ToReadOnlySpan(),
             result);
         
-        return new ArrayRangeSet<T>(result, length);
+        return new(result, length);
     }
 
     public ArrayRangeSet<T> Union(scoped ReadOnlySpan<Range<T>> other)
@@ -76,7 +76,7 @@ public class ArrayRangeSet<T>
             this.ToReadOnlySpan(),
             tempSpan[..tempSpanLength],
             result);
-        return new ArrayRangeSet<T>(result, length);
+        return new(result, length);
     }
 
     public ArrayRangeSet<T> Except(ArrayRangeSet<T> other)
@@ -89,7 +89,7 @@ public class ArrayRangeSet<T>
             other.ToReadOnlySpan(),
             result);
         
-        return new ArrayRangeSet<T>(result, length);
+        return new(result, length);
     }
 
     public ArrayRangeSet<T> Except(scoped ReadOnlySpan<Range<T>> other)
@@ -105,7 +105,7 @@ public class ArrayRangeSet<T>
             this.ToReadOnlySpan(),
             tempSpan[..tempSpanLength],
             result);
-        return new ArrayRangeSet<T>(result, length);
+        return new(result, length);
     }
 
     public ArrayRangeSet<T> Intersect(ArrayRangeSet<T> other)
@@ -114,7 +114,7 @@ public class ArrayRangeSet<T>
 
         if (this._length == 0 || other._length == 0)
         {
-            return new ArrayRangeSet<T>();
+            return new();
         }
 
         Range<T>[] result = new Range<T>[this._length + other._length - 1];
@@ -122,14 +122,14 @@ public class ArrayRangeSet<T>
             this.ToReadOnlySpan(),
             other._items,
             result);
-        return new ArrayRangeSet<T>(result, length);
+        return new(result, length);
     }
 
     public ArrayRangeSet<T> Intersect(scoped ReadOnlySpan<Range<T>> other)
     {
         if (this._length == 0 || other.Length == 0)
         {
-            return new ArrayRangeSet<T>();
+            return new();
         }
 
         using SpanOwner<Range<T>> tempSpanOwner = SpanOwner<Range<T>>.Allocate(other.Length);
@@ -143,7 +143,7 @@ public class ArrayRangeSet<T>
             this.ToReadOnlySpan(),
             tempSpan[..tempSpanLength],
             result);
-        return new ArrayRangeSet<T>(result, length);
+        return new(result, length);
     }
 
     public Range<T>[] ToArray()
