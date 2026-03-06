@@ -11,11 +11,14 @@ dotnet build --configuration Release
 # Run all tests
 dotnet test
 
-# Run a single test class
-dotnet test --filter "ClassName=RangeSet.Test.ArrayRangeSetTests"
+# Run a single test class (namespace is RangeSet.Tests, not RangeSet.Test)
+dotnet test --filter "ClassName=RangeSet.Tests.ArrayRangeSetTests"
 
 # Run a single test method
 dotnet test --filter "FullyQualifiedName~ArrayRangeSetTests.Union_ReturnsCorrectResult"
+
+# Target a specific TFM (only net10.0 is installed on dev machine)
+dotnet test -f net10.0
 
 # Run benchmarks (Release mode required)
 dotnet run --project RangeSet.Benchmarks -c Release
@@ -37,7 +40,7 @@ This is a .NET library (multi-targeted: `net8.0;net9.0;net10.0`) providing high-
 - **`Range<T>`** - Immutable inclusive range `[First, Last]`. Type constraint: `struct, IEquatable<T>, IComparable<T>`.
 - **`RangeOperations`** - Static low-level algorithms operating on `Span<Range<T>>`. All operations require non-overlapping inputs. Key distinction in naming: `Unsorted` (arbitrary), `Sorted` (sorted but may overlap/be adjacent), `Normalized` (sorted, non-overlapping, non-adjacent).
 - **`ArrayRangeSet<T>`** - Heap-allocated class wrapping a normalized `Range<T>[]`. Operations return new instances.
-- **`SpanRangeSet<T>`** - `ref struct` wrapping a caller-provided `Span<Range<T>>`. Constructor normalizes the span in-place. `Union` requires a caller-provided result buffer; `Except`/`Intersect` allocate internally.
+- **`SpanRangeSet<T>`** - `ref struct` wrapping a caller-provided `Span<Range<T>>`. Constructor normalizes the span in-place. All three operations (`Union`, `Except`, `Intersect`) require a caller-provided result buffer — no heap allocation in results.
 - **`SpanList<T>`** - Public `ref struct` list backed by a `Span<T>`. Used by `RangeOperations` to build results into pre-allocated buffers without heap allocation.
 - **`RangeComparer<T>`** - Singleton `IComparer<Range<T>>` used for sorting.
 
@@ -47,7 +50,7 @@ This is a .NET library (multi-targeted: `net8.0;net9.0;net10.0`) providing high-
 
 ### Dependencies
 
-- **`CommunityToolkit.HighPerformance`** - Used in `SpanRangeSet<T>` for `MemoryOwner<T>` (pooled heap buffers) in `Except` and `Intersect` results.
+- **`CommunityToolkit.HighPerformance`** - Used in `SpanRangeSet<T>` via `SpanOwner<T>` as a pooled temporary buffer when normalizing/sorting the `other` input in `ReadOnlySpan` overloads of `Union`, `Except`, and `Intersect`. Not used for result buffers.
 
 ### Build notes
 
