@@ -17,7 +17,7 @@ The library provides two main implementations:
 
 ## Supported Types
 
-- Integer types: `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `Int128`, `UInt128`
+- Integer types: `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `nint`, `nuint`, `Int128`, `UInt128`, `char`
 - Custom `unmanaged` types implementing the required interfaces
 
 ## Requirements
@@ -144,7 +144,7 @@ Use these to allocate (or stackalloc) the correct buffer size before calling ope
 Represents a single inclusive range from `First` to `Last`.
 
 ```csharp
-public readonly struct Range<T>
+public readonly struct Range<T> : IEquatable<Range<T>>
     where T : struct, IEquatable<T>, IComparable<T>
 ```
 
@@ -170,7 +170,7 @@ Low-level static helper class for range operations on spans. Provides methods fo
 Both `ArrayRangeSet<T>` and `SpanRangeSet<T>` require the same type constraints. To use a custom type, it must be an unmanaged type implementing:
 
 ```csharp
-public readonly unmanaged struct MyType : 
+public readonly struct MyType : 
     IEquatable<MyType>, 
     IComparable<MyType>,
     IMinMaxValue<MyType>,
