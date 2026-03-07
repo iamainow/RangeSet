@@ -82,7 +82,7 @@ public class SpanListTests
     }
 
     [Fact]
-    public void Constructor_FromReadOnlySpan_CopiesElementsFromSource()
+    public void Constructor_FromReadOnlySpan_IsIndependentOfSource()
     {
         Span<int> buffer = stackalloc int[10];
         var source = new int[] { 1, 2, 3 };
@@ -96,6 +96,17 @@ public class SpanListTests
         Assert.Equal(1, list[0]);
         Assert.Equal(2, list[1]);
         Assert.Equal(3, list[2]);
+    }
+
+    [Fact]
+    public void Constructor_FromReadOnlySpan_ThrowsWhenSourceExceedsCapacity()
+    {
+        Assert.Throws<ArgumentException>(() =>
+        {
+            Span<int> buffer = stackalloc int[2];
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3 };
+            var list = new SpanList<int>(buffer, source);
+        });
     }
 
     #endregion
@@ -339,15 +350,28 @@ public class SpanListTests
         Span<int> buffer = stackalloc int[10];
         var list = new SpanList<int>(buffer);
         list.Add(0);
-        
+
         Span<int> items = stackalloc int[] { 1, 2, 3 };
         list.AddRange(items);
-        
+
         Assert.Equal(4, list.Count);
         Assert.Equal(0, list[0]);
         Assert.Equal(1, list[1]);
         Assert.Equal(2, list[2]);
         Assert.Equal(3, list[3]);
+    }
+
+    [Fact]
+    public void AddRange_EmptySpan_DoesNothing()
+    {
+        Span<int> buffer = stackalloc int[10];
+        var list = new SpanList<int>(buffer);
+        list.Add(42);
+
+        list.AddRange(Span<int>.Empty);
+
+        Assert.Equal(1, list.Count);
+        Assert.Equal(42, list[0]);
     }
 
     #endregion
@@ -379,7 +403,7 @@ public class SpanListTests
     }
 
     [Fact]
-    public void RemoveLast_AllowsReadding()
+    public void RemoveLast_ThenAdd_Succeeds()
     {
         Span<int> buffer = stackalloc int[10];
         buffer[0] = 1;
@@ -485,13 +509,28 @@ public class SpanListTests
         Span<int> buffer = stackalloc int[10];
         for (int i = 0; i < 5; i++) buffer[i] = i + 1;
         var list = new SpanList<int>(buffer, 5);
-        
+
         list.RemoveRegion(1..3);
-        
+
         Assert.Equal(3, list.Count);
         Assert.Equal(1, list[0]);
         Assert.Equal(4, list[1]);
         Assert.Equal(5, list[2]);
+    }
+
+    [Fact]
+    public void RemoveRegion_ZeroCount_DoesNothing()
+    {
+        Span<int> buffer = stackalloc int[10];
+        for (int i = 0; i < 3; i++) buffer[i] = i + 1;
+        var list = new SpanList<int>(buffer, 3);
+
+        list.RemoveRegion(1, 0);
+
+        Assert.Equal(3, list.Count);
+        Assert.Equal(1, list[0]);
+        Assert.Equal(2, list[1]);
+        Assert.Equal(3, list[2]);
     }
 
     #endregion

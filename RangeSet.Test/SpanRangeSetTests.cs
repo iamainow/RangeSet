@@ -319,12 +319,25 @@ public class SpanRangeSetTests
         var set = new SpanRangeSet<int>(span);
         var unsorted = new[] { new Range<int>(20, 30), new Range<int>(3, 10) };
         Span<Range<int>> buffer = stackalloc Range<int>[10];
-        
+
         var result = set.Union(unsorted.AsSpan(), buffer);
-        
+
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new(1, 10), result.ToReadOnlySpan()[0]);
         Assert.Equal(new(20, 30), result.ToReadOnlySpan()[1]);
+    }
+
+    [Fact]
+    public void Union_WithEmptySpan_ReturnsOriginal()
+    {
+        Span<Range<int>> span = stackalloc Range<int>[1];
+        span[0] = new(1, 10);
+        var set = new SpanRangeSet<int>(span);
+        Span<Range<int>> buffer = stackalloc Range<int>[10];
+
+        var result = set.Union(ReadOnlySpan<Range<int>>.Empty, buffer);
+
+        Assert.Equal(set.ToReadOnlySpan().ToArray(), result.ToReadOnlySpan().ToArray());
     }
 
     #endregion
@@ -356,7 +369,7 @@ public class SpanRangeSetTests
     }
 
     [Fact]
-    public void Except_EmptyFromOther_ReturnsOriginal()
+    public void Except_WithEmptySubtrahend_ReturnsOriginal()
     {
         Span<Range<int>> span = stackalloc Range<int>[1];
         span[0] = new(1, 10);
@@ -417,6 +430,7 @@ public class SpanRangeSetTests
     [InlineData(1, 10, 1, 5, 6, 10)]
     [InlineData(1, 10, 5, 10, 1, 4)]
     [InlineData(1, 10, 4, 6, 1, 3, 7, 10)]
+#pragma warning disable CA1062 // params from [InlineData] are never null
     public void Except_PartialOverlap_ReturnsCorrectResult(int r1Start, int r1End, int r2Start, int r2End, params int[] expected)
     {
         Span<Range<int>> span1 = stackalloc Range<int>[1];
@@ -425,13 +439,13 @@ public class SpanRangeSetTests
         Span<Range<int>> span2 = stackalloc Range<int>[1];
         span2[0] = new(r2Start, r2End);
         var set2 = new SpanRangeSet<int>(span2);
-        ArgumentNullException.ThrowIfNull(expected);
-        var expectedRanges = CreateRangesFromPairs(expected);
+        var expectedRanges = TestHelpers.CreateRangesFromPairs(expected);
         Span<Range<int>> buffer = stackalloc Range<int>[2];
         var result = set1.Except(set2, buffer);
 
         Assert.Equal(expectedRanges, result.ToReadOnlySpan().ToArray());
     }
+#pragma warning restore CA1062
 
     [Fact]
     public void Except_MultipleExclusionsFromSingleRange_SplitsCorrectly()
@@ -494,10 +508,40 @@ public class SpanRangeSetTests
         var other = new[] { new Range<int>(3, 7) };
         Span<Range<int>> buffer = stackalloc Range<int>[2];
         var result = set.Except(other.AsSpan(), buffer);
-        
+
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new(1, 2), result.ToReadOnlySpan()[0]);
         Assert.Equal(new(8, 10), result.ToReadOnlySpan()[1]);
+    }
+
+    [Fact]
+    public void Except_WithEmptySpan_ReturnsOriginal()
+    {
+        Span<Range<int>> span = stackalloc Range<int>[1];
+        span[0] = new(1, 10);
+        var set = new SpanRangeSet<int>(span);
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+
+        var result = set.Except(ReadOnlySpan<Range<int>>.Empty, buffer);
+
+        Assert.Equal(set.ToReadOnlySpan().ToArray(), result.ToReadOnlySpan().ToArray());
+    }
+
+    [Fact]
+    public void Except_WithUnsortedSpan_ReturnsCorrectResult()
+    {
+        Span<Range<int>> span = stackalloc Range<int>[1];
+        span[0] = new(1, 20);
+        var set = new SpanRangeSet<int>(span);
+        var unsorted = new[] { new Range<int>(10, 15), new Range<int>(3, 7) };
+        Span<Range<int>> buffer = stackalloc Range<int>[3];
+
+        var result = set.Except(unsorted.AsSpan(), buffer);
+
+        Assert.Equal(3, result.RangesCount);
+        Assert.Equal(new(1, 2), result.ToReadOnlySpan()[0]);
+        Assert.Equal(new(8, 9), result.ToReadOnlySpan()[1]);
+        Assert.Equal(new(16, 20), result.ToReadOnlySpan()[2]);
     }
 
     #endregion
@@ -680,11 +724,25 @@ public class SpanRangeSetTests
         span[0] = new(1, 10);
         span[1] = new(20, 30);
         var set = new SpanRangeSet<int>(span);
-        
+
         Span<Range<int>> buffer = stackalloc Range<int>[1];
         var result = set.Intersect(Span<Range<int>>.Empty, buffer);
-        
+
         Assert.Equal(0, result.RangesCount);
+    }
+
+    [Fact]
+    public void Intersect_Self_ReturnsSameRanges()
+    {
+        Span<Range<int>> span = stackalloc Range<int>[2];
+        span[0] = new(1, 10);
+        span[1] = new(20, 30);
+        var set = new SpanRangeSet<int>(span);
+        Span<Range<int>> buffer = stackalloc Range<int>[4];
+
+        var result = set.Intersect(set, buffer);
+
+        Assert.Equal(set.ToReadOnlySpan().ToArray(), result.ToReadOnlySpan().ToArray());
     }
 
     #endregion
@@ -870,27 +928,124 @@ public class SpanRangeSetTests
         span[0] = new(1, 10);
         span[1] = new(20, 30);
         var set = new SpanRangeSet<int>(span);
-        
+
         var result = set.ToString();
-        
-        Assert.Contains("1", result);
-        Assert.Contains("10", result);
-        Assert.Contains("20", result);
-        Assert.Contains("30", result);
+
+        Assert.Contains("1 - 10", result);
+        Assert.Contains("20 - 30", result);
     }
 
     #endregion
 
-    #region Helper Methods
+    #region Non-Mutation Tests
 
-    private static Range<int>[] CreateRangesFromPairs(int[] pairs)
+    [Fact]
+    public void Union_DoesNotModifyOriginalSets()
     {
-        var ranges = new Range<int>[pairs.Length / 2];
-        for (int i = 0; i < pairs.Length / 2; i++)
-        {
-            ranges[i] = new(pairs[i * 2], pairs[i * 2 + 1]);
-        }
-        return ranges;
+        Span<Range<int>> span1 = stackalloc Range<int>[1];
+        span1[0] = new(1, 10);
+        var set1 = new SpanRangeSet<int>(span1);
+        Span<Range<int>> span2 = stackalloc Range<int>[1];
+        span2[0] = new(20, 30);
+        var set2 = new SpanRangeSet<int>(span2);
+        var original1 = set1.ToArray();
+        var original2 = set2.ToArray();
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+
+        set1.Union(set2, buffer);
+
+        Assert.Equal(original1, set1.ToArray());
+        Assert.Equal(original2, set2.ToArray());
+    }
+
+    [Fact]
+    public void Except_DoesNotModifyOriginalSets()
+    {
+        Span<Range<int>> span1 = stackalloc Range<int>[1];
+        span1[0] = new(1, 10);
+        var set1 = new SpanRangeSet<int>(span1);
+        Span<Range<int>> span2 = stackalloc Range<int>[1];
+        span2[0] = new(3, 7);
+        var set2 = new SpanRangeSet<int>(span2);
+        var original1 = set1.ToArray();
+        var original2 = set2.ToArray();
+        Span<Range<int>> buffer = stackalloc Range<int>[2];
+
+        set1.Except(set2, buffer);
+
+        Assert.Equal(original1, set1.ToArray());
+        Assert.Equal(original2, set2.ToArray());
+    }
+
+    [Fact]
+    public void Intersect_DoesNotModifyOriginalSets()
+    {
+        Span<Range<int>> span1 = stackalloc Range<int>[1];
+        span1[0] = new(1, 10);
+        var set1 = new SpanRangeSet<int>(span1);
+        Span<Range<int>> span2 = stackalloc Range<int>[1];
+        span2[0] = new(5, 15);
+        var set2 = new SpanRangeSet<int>(span2);
+        var original1 = set1.ToArray();
+        var original2 = set2.ToArray();
+        Span<Range<int>> buffer = stackalloc Range<int>[1];
+
+        set1.Intersect(set2, buffer);
+
+        Assert.Equal(original1, set1.ToArray());
+        Assert.Equal(original2, set2.ToArray());
+    }
+
+    #endregion
+
+    #region Associativity
+
+    [Fact]
+    public void Union_Associative()
+    {
+        Span<Range<int>> spanA = stackalloc Range<int>[1];
+        spanA[0] = new(1, 10);
+        var a = new SpanRangeSet<int>(spanA);
+        Span<Range<int>> spanB = stackalloc Range<int>[1];
+        spanB[0] = new(5, 20);
+        var b = new SpanRangeSet<int>(spanB);
+        Span<Range<int>> spanC = stackalloc Range<int>[1];
+        spanC[0] = new(15, 30);
+        var c = new SpanRangeSet<int>(spanC);
+
+        Span<Range<int>> buf1 = stackalloc Range<int>[2];
+        Span<Range<int>> buf2 = stackalloc Range<int>[2];
+        Span<Range<int>> buf3 = stackalloc Range<int>[2];
+        Span<Range<int>> buf4 = stackalloc Range<int>[2];
+
+        var left = a.Union(b, buf1).Union(c, buf2);
+        var right = a.Union(b.Union(c, buf3), buf4);
+
+        Assert.Equal(left.ToArray(), right.ToArray());
+    }
+
+    [Fact]
+    public void Intersect_Associative()
+    {
+        Span<Range<int>> spanA = stackalloc Range<int>[1];
+        spanA[0] = new(1, 20);
+        var a = new SpanRangeSet<int>(spanA);
+        Span<Range<int>> spanB = stackalloc Range<int>[1];
+        spanB[0] = new(5, 25);
+        var b = new SpanRangeSet<int>(spanB);
+        Span<Range<int>> spanC = stackalloc Range<int>[1];
+        spanC[0] = new(10, 30);
+        var c = new SpanRangeSet<int>(spanC);
+
+        Span<Range<int>> buf1 = stackalloc Range<int>[1];
+        Span<Range<int>> buf2 = stackalloc Range<int>[1];
+        Span<Range<int>> buf3 = stackalloc Range<int>[1];
+        Span<Range<int>> buf4 = stackalloc Range<int>[1];
+
+        var left = a.Intersect(b, buf1).Intersect(c, buf2);
+        var right = a.Intersect(b.Intersect(c, buf3), buf4);
+
+        Assert.Equal(left.ToArray(), right.ToArray());
     }
 
     #endregion

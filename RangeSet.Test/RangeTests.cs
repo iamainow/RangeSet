@@ -95,4 +95,43 @@ public class RangeTests
         Assert.Equal(int.MinValue, intRange.First);
         Assert.Equal(int.MaxValue, intRange.Last);
     }
+
+    [Fact]
+    public void ToString_SingleValueRange_ReturnsCorrectFormat()
+    {
+        var range = new Range<int>(5, 5);
+
+        var result = range.ToString();
+
+        Assert.Equal("5 - 5", result);
+    }
+
+    [Fact]
+    public void GetHashCode_DifferentRanges_LikelyDifferent()
+    {
+        var range1 = new Range<int>(1, 10);
+        var range2 = new Range<int>(1, 11);
+        var range3 = new Range<int>(2, 10);
+
+        Assert.NotEqual(range1.GetHashCode(), range2.GetHashCode());
+        Assert.NotEqual(range1.GetHashCode(), range3.GetHashCode());
+    }
+
+    [Fact]
+    public void Constructor_Long_Success()
+    {
+        var range = new Range<long>(0L, 1_000_000_000L);
+
+        Assert.Equal(0L, range.First);
+        Assert.Equal(1_000_000_000L, range.Last);
+    }
+
+    [Fact]
+    public void Constructor_Long_BoundaryValues_Success()
+    {
+        var range = new Range<long>(long.MinValue, long.MaxValue);
+
+        Assert.Equal(long.MinValue, range.First);
+        Assert.Equal(long.MaxValue, range.Last);
+    }
 }

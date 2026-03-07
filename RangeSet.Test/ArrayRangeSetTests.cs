@@ -53,14 +53,14 @@ public class ArrayRangeSetTests
 
     [Theory]
     [InlineData(new int[] { 20, 30, 1, 10, 5, 15 }, new int[] { 1, 15, 20, 30 })]
+#pragma warning disable CA1062 // params from [InlineData] are never null
     public void Constructor_FromUnsortedArray_NormalizesAndMerges(int[] input, int[] expected)
     {
-        ArgumentNullException.ThrowIfNull(input);
-        ArgumentNullException.ThrowIfNull(expected);
-        var set = new ArrayRangeSet<int>(CreateRangesFromPairs(input));
+        var set = new ArrayRangeSet<int>(TestHelpers.CreateRangesFromPairs(input));
 
-        Assert.Equal(CreateRangesFromPairs(expected), set.ToArray());
+        Assert.Equal(TestHelpers.CreateRangesFromPairs(expected), set.ToArray());
     }
+#pragma warning restore CA1062
 
     [Fact]
     public void Constructor_FromAdjacentRanges_MergesIntoSingleRange()
@@ -279,12 +279,22 @@ public class ArrayRangeSetTests
     {
         var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 5) });
         var unsorted = new[] { new Range<int>(20, 30), new Range<int>(3, 10) };
-        
+
         var result = set.Union(unsorted.AsSpan());
-        
+
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new(1, 10), result.ToArray()[0]);
         Assert.Equal(new(20, 30), result.ToArray()[1]);
+    }
+
+    [Fact]
+    public void Union_WithEmptySpan_ReturnsOriginal()
+    {
+        var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
+
+        var result = set.Union(ReadOnlySpan<Range<int>>.Empty);
+
+        Assert.Equal(set.ToArray(), result.ToArray());
     }
 
     #endregion
@@ -310,7 +320,7 @@ public class ArrayRangeSetTests
     }
 
     [Fact]
-    public void Except_EmptyFromOther_ReturnsOriginal()
+    public void Except_WithEmptySubtrahend_ReturnsOriginal()
     {
         var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
         
@@ -356,17 +366,18 @@ public class ArrayRangeSetTests
     [InlineData(1, 10, 1, 5, 6, 10)]
     [InlineData(1, 10, 5, 10, 1, 4)]
     [InlineData(1, 10, 4, 6, 1, 3, 7, 10)]
+#pragma warning disable CA1062 // params from [InlineData] are never null
     public void Except_PartialOverlap_ReturnsCorrectResult(int r1Start, int r1End, int r2Start, int r2End, params int[] expected)
     {
-        ArgumentNullException.ThrowIfNull(expected);
         var set1 = new ArrayRangeSet<int>(new[] { new Range<int>(r1Start, r1End) });
         var set2 = new ArrayRangeSet<int>(new[] { new Range<int>(r2Start, r2End) });
-        var expectedRanges = CreateRangesFromPairs(expected);
+        var expectedRanges = TestHelpers.CreateRangesFromPairs(expected);
         
         var result = set1.Except(set2);
         
         Assert.Equal(expectedRanges, result.ToArray());
     }
+#pragma warning restore CA1062
 
     [Fact]
     public void Except_MultipleExclusionsFromSingleRange_SplitsCorrectly()
@@ -435,12 +446,37 @@ public class ArrayRangeSetTests
     {
         var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
         var span = new[] { new Range<int>(3, 7) };
-        
+
         var result = set.Except(span.AsSpan());
-        
+
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new(1, 2), result.ToArray()[0]);
         Assert.Equal(new(8, 10), result.ToArray()[1]);
+    }
+
+    [Fact]
+    public void Except_WithEmptySpan_ReturnsOriginal()
+    {
+        var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
+
+        var result = set.Except(ReadOnlySpan<Range<int>>.Empty);
+
+        Assert.Equal(set.ToArray(), result.ToArray());
+    }
+
+    [Fact]
+    public void Except_WithUnsortedSpan_NormalizesCorrectly()
+    {
+        var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 20) });
+        var unsorted = new[] { new Range<int>(10, 15), new Range<int>(3, 7) };
+
+        var result = set.Except(unsorted.AsSpan());
+
+        Assert.Equal(3, result.RangesCount);
+        var array = result.ToArray();
+        Assert.Equal(new(1, 2), array[0]);
+        Assert.Equal(new(8, 9), array[1]);
+        Assert.Equal(new(16, 20), array[2]);
     }
 
     #endregion
@@ -574,12 +610,32 @@ public class ArrayRangeSetTests
     {
         var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10), new Range<int>(20, 30) });
         var span = new[] { new Range<int>(5, 25) };
-        
+
         var result = set.Intersect(span.AsSpan());
-        
+
         Assert.Equal(2, result.RangesCount);
         Assert.Equal(new(5, 10), result.ToArray()[0]);
         Assert.Equal(new(20, 25), result.ToArray()[1]);
+    }
+
+    [Fact]
+    public void Intersect_Self_ReturnsSameRanges()
+    {
+        var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10), new Range<int>(20, 30) });
+
+        var result = set.Intersect(set);
+
+        Assert.Equal(set.ToArray(), result.ToArray());
+    }
+
+    [Fact]
+    public void Intersect_WithEmptySpan_ReturnsEmpty()
+    {
+        var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
+
+        var result = set.Intersect(ReadOnlySpan<Range<int>>.Empty);
+
+        Assert.Equal(0, result.RangesCount);
     }
 
     #endregion
@@ -637,10 +693,23 @@ public class ArrayRangeSetTests
         var a = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
         var b = new ArrayRangeSet<int>(new[] { new Range<int>(5, 15) });
         var c = new ArrayRangeSet<int>(new[] { new Range<int>(8, 20) });
-        
+
         var left = a.Union(b).Intersect(c);
         var right = a.Intersect(c).Union(b.Intersect(c));
-        
+
+        Assert.Equal(left.ToArray(), right.ToArray());
+    }
+
+    [Fact]
+    public void Distributivity_IntersectOverUnion()
+    {
+        var a = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
+        var b = new ArrayRangeSet<int>(new[] { new Range<int>(5, 15) });
+        var c = new ArrayRangeSet<int>(new[] { new Range<int>(8, 20) });
+
+        var left = a.Intersect(b.Union(c));
+        var right = a.Intersect(b).Union(a.Intersect(c));
+
         Assert.Equal(left.ToArray(), right.ToArray());
     }
 
@@ -709,6 +778,28 @@ public class ArrayRangeSetTests
         Assert.Equal(2, except.RangesCount);
     }
 
+    [Fact]
+    public void ArrayRangeSet_Long_FullOperations()
+    {
+        var set1 = new ArrayRangeSet<long>(new[] { new Range<long>(1L, 100L), new Range<long>(200L, 300L) });
+        var set2 = new ArrayRangeSet<long>(new[] { new Range<long>(50L, 250L) });
+
+        var union = set1.Union(set2);
+        var intersect = set1.Intersect(set2);
+        var except = set1.Except(set2);
+
+        Assert.Equal(1, union.RangesCount);
+        Assert.Equal(new Range<long>(1L, 300L), union.ToArray()[0]);
+
+        Assert.Equal(2, intersect.RangesCount);
+        Assert.Equal(new Range<long>(50L, 100L), intersect.ToArray()[0]);
+        Assert.Equal(new Range<long>(200L, 250L), intersect.ToArray()[1]);
+
+        Assert.Equal(2, except.RangesCount);
+        Assert.Equal(new Range<long>(1L, 49L), except.ToArray()[0]);
+        Assert.Equal(new Range<long>(251L, 300L), except.ToArray()[1]);
+    }
+
     #endregion
 
     #region ToString Tests
@@ -723,27 +814,41 @@ public class ArrayRangeSetTests
     public void ToString_NonEmptySet_ContainsRangeInfo()
     {
         var set = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10), new Range<int>(20, 30) });
-        
+
         var result = set.ToString();
-        
-        Assert.Contains("1", result);
-        Assert.Contains("10", result);
-        Assert.Contains("20", result);
-        Assert.Contains("30", result);
+
+        Assert.Contains("1 - 10", result);
+        Assert.Contains("20 - 30", result);
     }
 
     #endregion
 
-    #region Helper Methods
+    #region Associativity
 
-    private static Range<int>[] CreateRangesFromPairs(int[] pairs)
+    [Fact]
+    public void Union_Associative()
     {
-        var ranges = new Range<int>[pairs.Length / 2];
-        for (int i = 0; i < pairs.Length / 2; i++)
-        {
-            ranges[i] = new(pairs[i * 2], pairs[i * 2 + 1]);
-        }
-        return ranges;
+        var a = new ArrayRangeSet<int>(new[] { new Range<int>(1, 10) });
+        var b = new ArrayRangeSet<int>(new[] { new Range<int>(5, 20) });
+        var c = new ArrayRangeSet<int>(new[] { new Range<int>(15, 30) });
+
+        var left = a.Union(b).Union(c);
+        var right = a.Union(b.Union(c));
+
+        Assert.Equal(left.ToArray(), right.ToArray());
+    }
+
+    [Fact]
+    public void Intersect_Associative()
+    {
+        var a = new ArrayRangeSet<int>(new[] { new Range<int>(1, 20) });
+        var b = new ArrayRangeSet<int>(new[] { new Range<int>(5, 25) });
+        var c = new ArrayRangeSet<int>(new[] { new Range<int>(10, 30) });
+
+        var left = a.Intersect(b).Intersect(c);
+        var right = a.Intersect(b.Intersect(c));
+
+        Assert.Equal(left.ToArray(), right.ToArray());
     }
 
     #endregion

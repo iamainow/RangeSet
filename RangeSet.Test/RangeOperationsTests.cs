@@ -192,11 +192,26 @@ public class RangeOperationsTests
         Span<Range<int>> span = stackalloc Range<int>[2];
         span[0] = new(1, int.MaxValue - 1);
         span[1] = new(int.MaxValue, int.MaxValue);
-        
+
         int result = RangeOperations.NormalizeSorted(span);
-        
+
         Assert.Equal(1, result);
         Assert.Equal(new(1, int.MaxValue), span[0]);
+    }
+
+    [Fact]
+    public void NormalizeSorted_AtMaxValue_Gap_KeepsBothRanges()
+    {
+        // Gap of one between the two ranges — must NOT merge
+        Span<Range<int>> span = stackalloc Range<int>[2];
+        span[0] = new(1, int.MaxValue - 2);
+        span[1] = new(int.MaxValue, int.MaxValue);
+
+        int result = RangeOperations.NormalizeSorted(span);
+
+        Assert.Equal(2, result);
+        Assert.Equal(new(1, int.MaxValue - 2), span[0]);
+        Assert.Equal(new(int.MaxValue, int.MaxValue), span[1]);
     }
 
     #endregion
@@ -534,11 +549,45 @@ public class RangeOperationsTests
         Span<Range<int>> sorted = stackalloc Range<int>[1];
         sorted[0] = new(int.MaxValue, int.MaxValue);
         Span<Range<int>> result = stackalloc Range<int>[10];
-        
+
         int count = RangeOperations.ExceptNormalizedSorted(normalized, sorted, result);
-        
+
         Assert.Equal(1, count);
         Assert.Equal(new(0, int.MaxValue - 1), result[0]);
+    }
+
+    [Fact]
+    public void ExceptNormalizedSorted_SortedWithOverlappingRanges_ReturnsCorrectResult()
+    {
+        // sorted can be overlapping (it's sorted but not necessarily normalized)
+        Span<Range<int>> normalized = stackalloc Range<int>[1];
+        normalized[0] = new(1, 20);
+        Span<Range<int>> sorted = stackalloc Range<int>[2];
+        sorted[0] = new(3, 8);
+        sorted[1] = new(6, 12);
+        Span<Range<int>> result = stackalloc Range<int>[10];
+
+        int count = RangeOperations.ExceptNormalizedSorted(normalized, sorted, result);
+
+        // [3,8] and [6,12] together exclude [3,12] from [1,20] → [1,2] and [13,20]
+        Assert.Equal(2, count);
+        Assert.Equal(new(1, 2), result[0]);
+        Assert.Equal(new(13, 20), result[1]);
+    }
+
+    [Fact]
+    public void ExceptNormalizedSorted_SortedCoversMultipleNormalized_ReturnsEmpty()
+    {
+        Span<Range<int>> normalized = stackalloc Range<int>[2];
+        normalized[0] = new(5, 10);
+        normalized[1] = new(20, 25);
+        Span<Range<int>> sorted = stackalloc Range<int>[1];
+        sorted[0] = new(1, 30);
+        Span<Range<int>> result = stackalloc Range<int>[10];
+
+        int count = RangeOperations.ExceptNormalizedSorted(normalized, sorted, result);
+
+        Assert.Equal(0, count);
     }
 
     #endregion
@@ -684,6 +733,21 @@ public class RangeOperationsTests
         });
     }
 
+    [Fact]
+    public void IntersectNormalizedNormalized_AdjacentRanges_ReturnsEmpty()
+    {
+        // Adjacent but non-overlapping — intersection must be empty
+        Span<Range<int>> normalized1 = stackalloc Range<int>[1];
+        normalized1[0] = new(1, 10);
+        Span<Range<int>> normalized2 = stackalloc Range<int>[1];
+        normalized2[0] = new(11, 20);
+        Span<Range<int>> result = stackalloc Range<int>[10];
+
+        int count = RangeOperations.IntersectNormalizedNormalized(normalized1, normalized2, result);
+
+        Assert.Equal(0, count);
+    }
+
     #endregion
 
     #region CalcIntersectBufferLength Tests
@@ -712,6 +776,35 @@ public class RangeOperationsTests
         Assert.Equal(4, RangeOperations.CalcIntersectBufferLength(2, 3));
         Assert.Equal(9, RangeOperations.CalcIntersectBufferLength(5, 5));
         Assert.Equal(1, RangeOperations.CalcIntersectBufferLength(1, 1));
+    }
+
+    [Fact]
+    public void CalcIntersectBufferLength_Commutative()
+    {
+        Assert.Equal(
+            RangeOperations.CalcIntersectBufferLength(1, 5),
+            RangeOperations.CalcIntersectBufferLength(5, 1));
+        Assert.Equal(
+            RangeOperations.CalcIntersectBufferLength(3, 7),
+            RangeOperations.CalcIntersectBufferLength(7, 3));
+    }
+
+    #endregion
+
+    #region NormalizeSorted Duplicate Tests
+
+    [Fact]
+    public void NormalizeSorted_Duplicates_MergesIntoSingle()
+    {
+        Span<Range<int>> span = stackalloc Range<int>[3];
+        span[0] = new(1, 10);
+        span[1] = new(1, 10);
+        span[2] = new(1, 10);
+
+        int result = RangeOperations.NormalizeSorted(span);
+
+        Assert.Equal(1, result);
+        Assert.Equal(new(1, 10), span[0]);
     }
 
     #endregion
