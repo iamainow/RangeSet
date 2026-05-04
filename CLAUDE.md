@@ -39,7 +39,7 @@ This is a .NET library (multi-targeted: `net8.0;net9.0;net10.0`) providing high-
 
 - **`Range<T>`** - Immutable inclusive range `[First, Last]`. Type constraint: `struct, IEquatable<T>, IComparable<T>`.
 - **`RangeOperations`** - Static low-level algorithms operating on `Span<Range<T>>`. All operations require non-overlapping inputs. Key distinction in naming: `Unsorted` (arbitrary), `Sorted` (sorted but may overlap/be adjacent), `Normalized` (sorted, non-overlapping, non-adjacent).
-- **`ArrayRangeSet<T>`** - Heap-allocated class wrapping a normalized `Range<T>[]`. Operations return new instances.
+- **`ArrayRangeSet<T>`** - Heap-allocated class wrapping a normalized `Range<T>[]`. Operations return new instances. Also exposes `|` (Union), `&` (Intersect), `-` (Except) operator overloads. Operators are intentionally not on `SpanRangeSet<T>` to keep its caller-provided buffer requirement explicit.
 - **`SpanRangeSet<T>`** - `ref struct` wrapping a caller-provided `Span<Range<T>>`. Constructor normalizes the span in-place. All three operations (`Union`, `Except`, `Intersect`) require a caller-provided result buffer — no heap allocation in results.
 - **`SpanRangeSet`** (static, non-generic) - Buffer-size helpers: `CalculateUnionSize`, `CalculateExceptSize`, `CalculateIntersectSize`. Call before `stackalloc`-ing result buffers.
 - **`SpanList<T>`** - Public `ref struct` list backed by a `Span<T>`. Used by `RangeOperations` to build results into pre-allocated buffers without heap allocation.

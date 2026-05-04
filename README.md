@@ -48,6 +48,11 @@ var difference = range1.Except(range2);
 // Find intersection → [3-5, 10-12]
 var intersection = range1.Intersect(range2);
 
+// Operator syntax: | union, & intersect, - except
+var u = range1 | range2;
+var i = range1 & range2;
+var d = range1 - range2;
+
 // Example 2: Using SpanRangeSet (low-allocation, stack-friendly)
 Span<Range<uint>> buffer1 = stackalloc Range<uint>[2];
 buffer1[0] = new Range<uint>(1, 5);
@@ -95,9 +100,9 @@ public class ArrayRangeSet<T>
 ```
 
 **Operations:**
-- `Union()` - Combine two range sets
-- `Except()` - Subtract one range set from another
-- `Intersect()` - Find common ranges between two sets
+- `Union()` / `|` - Combine two range sets
+- `Except()` / `-` - Subtract one range set from another
+- `Intersect()` / `&` - Find common ranges between two sets
 - `ToArray()` - Convert to array of `Range<T>`
 - `ToReadOnlySpan()` - Access underlying span
 - `RangesCount` - Get the number of ranges in the set

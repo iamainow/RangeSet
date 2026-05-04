@@ -146,6 +146,26 @@ public class ArrayRangeSet<T>
         return new(result, length);
     }
 
+#pragma warning disable CA2225 // Operator overloads have named alternates (Union, Intersect, Except)
+    public static ArrayRangeSet<T> operator |(ArrayRangeSet<T> left, ArrayRangeSet<T> right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        return left.Union(right);
+    }
+
+    public static ArrayRangeSet<T> operator &(ArrayRangeSet<T> left, ArrayRangeSet<T> right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        return left.Intersect(right);
+    }
+
+    public static ArrayRangeSet<T> operator -(ArrayRangeSet<T> left, ArrayRangeSet<T> right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        return left.Except(right);
+    }
+#pragma warning restore CA2225
+
     public Range<T>[] ToArray()
     {
         Range<T>[] result = new Range<T>[this._length];
