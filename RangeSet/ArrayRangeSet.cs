@@ -138,7 +138,7 @@ public class ArrayRangeSet<T>
         other.CopyTo(tempSpan);
         int tempSpanLength = RangeOperations.NormalizeUnsorted(tempSpan);
 
-        Range<T>[] result = new Range<T>[this._items.Length + tempSpanLength - 1];
+        Range<T>[] result = new Range<T>[this._length + tempSpanLength - 1];
         int length = RangeOperations.IntersectNormalizedNormalized(
             this.ToReadOnlySpan(),
             tempSpan[..tempSpanLength],

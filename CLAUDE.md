@@ -41,12 +41,17 @@ This is a .NET library (multi-targeted: `net8.0;net9.0;net10.0`) providing high-
 - **`RangeOperations`** - Static low-level algorithms operating on `Span<Range<T>>`. All operations require non-overlapping inputs. Key distinction in naming: `Unsorted` (arbitrary), `Sorted` (sorted but may overlap/be adjacent), `Normalized` (sorted, non-overlapping, non-adjacent).
 - **`ArrayRangeSet<T>`** - Heap-allocated class wrapping a normalized `Range<T>[]`. Operations return new instances.
 - **`SpanRangeSet<T>`** - `ref struct` wrapping a caller-provided `Span<Range<T>>`. Constructor normalizes the span in-place. All three operations (`Union`, `Except`, `Intersect`) require a caller-provided result buffer — no heap allocation in results.
+- **`SpanRangeSet`** (static, non-generic) - Buffer-size helpers: `CalculateUnionSize`, `CalculateExceptSize`, `CalculateIntersectSize`. Call before `stackalloc`-ing result buffers.
 - **`SpanList<T>`** - Public `ref struct` list backed by a `Span<T>`. Used by `RangeOperations` to build results into pre-allocated buffers without heap allocation.
 - **`RangeComparer<T>`** - Singleton `IComparer<Range<T>>` used for sorting.
+
+Method-name suffix in `RangeOperations` encodes input preconditions: `*Unsorted` → arbitrary input, `*Sorted` → sorted (may overlap/be adjacent), `*Normalized` → sorted + non-overlapping + non-adjacent. E.g., `ExceptNormalizedSorted` requires the first arg normalized and the second only sorted.
 
 ### Type constraint pattern
 
 `ArrayRangeSet<T>` and `SpanRangeSet<T>` require: `unmanaged, IEquatable<T>, IComparable<T>, IMinMaxValue<T>, IIncrementOperators<T>, IDecrementOperators<T>`. The `IMinMaxValue<T>` constraint is needed for boundary handling in union (to avoid overflow when checking adjacency at `MaxValue`).
+
+Built-in supported `T`: `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `nint`, `nuint`, `Int128`, `UInt128`, `char`.
 
 ### Dependencies
 
@@ -62,3 +67,4 @@ This is a .NET library (multi-targeted: `net8.0;net9.0;net10.0`) providing high-
 - `RangeOperations` result buffers must not overlap with either input span.
 - `SpanRangeSet<T>` cannot escape its defining scope (ref struct restriction).
 - `SpanRangeSet.CalculateUnionSize/ExceptSize/IntersectSize` are the safe way to size result buffers.
+- Library must remain AOT-compatible: no reflection, no dynamic code generation.
